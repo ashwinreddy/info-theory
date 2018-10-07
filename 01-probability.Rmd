@@ -1,0 +1,315 @@
+# (PART) Theory {-}
+
+# Stochastic Variables
+
+
+```{definition, name = "Stochastic Variable"}
+
+A **stochastic variable** is a real-valued function of an outcome of an experiment. 
+
+```
+
+```{remark}
+
+Stochastic variables are also called random variables, but this term seems to imply all possibilities are equally likely or cannot be determined. The word stochastic generally means something like "depending upon probabilities." 
+
+```
+
+
+```{example}
+
+Toss a coin 7 times. The number of heads in the sequence could be a stochastic variable. 
+
+```
+
+```{remark}
+
+The 7-long sequence itself is not a stochastic variable, since it is not a real value. We should always have a clear way of assigning a real number to the outcome.
+
+```
+
+```{example}
+
+Sum two rolls of a die. This value could be a stochastic variable. The number of 5's rolled could also be a stochastic variable.
+
+```
+
+A stochastic variable can either be discrete, taking on values from a countable set or continuous, taking on values on an interval from the real number line. 
+
+
+## Probability Measure
+
+```{definition, name = "Sample Space"}
+
+The sample space is the set of all possible outcomes for an experiment.
+
+```
+
+```{marginfigure}
+
+The sample space is typically denoted as $\Omega$.
+
+```
+
+
+```{definition, name = "Event"}
+
+An **event** is a subset of the sample space $\Omega$.
+
+```
+
+```{remark}
+
+Any event belongs to the power set of $\Omega$.[^event-examples] Thus, events range from the empty set to a singleton set (i.e. a set with size unity) to $\Omega$ itself and anything in between.
+
+```
+
+[^event-examples]: The Wikipedia article on [events](https://en.wikipedia.org/wiki/Event_(probability_theory)#A_simple_example) has good examples.
+
+```{marginfigure, fig.cap = "Relationship of Variables in Probability"}
+\begin{tikzcd}
+ & X \arrow{dr}{\text{can take on values from}} \\
+\mathbb{P} \arrow{ur}{\text{function of}} \arrow{rr}{\text{of specific value}} && x
+\end{tikzcd}
+```
+
+```{definition, name = "Probability Measure"}
+
+The probability measure $\mathbb{P}$ is a real-valued function that assigns events probabilities obeying the Kolmogorov axioms.
+
+```
+
+Our notions of probability are fairly intuitive, so a careful treatment of the Kolmogorov axioms is not needed. They are available in the [appendix](#kmaxm), however.
+
+
+```{marginfigure}
+**Notation**. In general, if $X$ is a stochastic variable, the probability mass function can be written in two equivalent ways:
+
+\begin{equation}
+p_X(x) = \mathbb{P}(X=x)
+(\#eq:prob-notation)
+\end{equation}
+
+```
+
+
+## Bayes' Theorem
+
+When events $A$ and $B$ are not independent, knowing what $A$ is gives us information about what $B$ might be (and vice versa). The notation $\mathbb{P}(A|B)$ denotes the probability of $A$ given that or conditioned upon $B$ occuring. Consider that for $A$ and $B$ to happen that $B$ must first happen and $A$ must happen under those circumstances. 
+
+$$
+\mathbb{P}(A \cap B)  = \mathbb{P}(B) \cdot \mathbb{P}\left(A | B\right) 
+$$
+
+From this definition, Thomas Bayes determined how to compute the support $B$ provides for $A$ given _priors_ and _posteriors_. 
+
+
+```{theorem, name = "Bayes' Theorem"}
+
+\begin{equation}
+\mathbb{P}( A|B) = \frac{\mathbb{P}(B|A)\mathbb{P}(A)}{\mathbb{P}(B)}
+\end{equation}
+
+```
+
+
+## Probability Mass Functions
+
+A **probability mass function** (pmf) characterizes a discrete stochastic variable by returning the probability measure of some $x$ in $\Omega$ occuring.
+
+
+
+```{example}
+
+Consider 2 tosses of a fair coin. What is the probability mass function (pmf) of the number of heads given this experiment?
+  
+```
+
+```{solution}
+
+It is useful to construct a table of all the possibilities.
+
+||Heads|Tails|
+|-|-|-|
+|Heads|2|1|
+|Tails|1|0|
+  
+From the table, we can conclude that
+
+$$
+\mathbb{P}(X=x) = \begin{cases}
+1/4 & x = 0 \\
+1/2 & x = 1 \\
+1/4 & x = 2 \\
+0 & \text{otherwise}
+\end{cases}
+$$
+
+```
+
+
+
+```{example}
+
+Consider a 4-sided die rolled twice. What is the probability mass function for the maximum value of 2 rolls?
+
+```
+
+```{solution}
+
+  
+As before, let us think about the various possibilities. There are $4 \times 4 = 16$ total possibilities, and the maximum value can take on values 1, 2, 3, and 4. To take on a value of 1, both rolls must have been a 1; the probability of this happening is 1/16. To take on a value of 2, one of the rolls must have been a 2 and the other one must have been a 1 or a 2. The possibilites are enumerated as (2,1), (2,2), (1,2). Thus, its chance is 3/16. For a max value of 3, the possibilities are (3,1), (3,2), (3,3), (1,3), (2,3). Thus,
+  
+$$
+p_X(x) = \begin{cases}
+1/16 & x = 1 \\
+3/16 & x = 2 \\
+5/16 & x = 3 \\
+7/16 & x = 4 \\
+0 & \text{otherwise}
+\end{cases}
+$$
+
+
+```
+
+There are a few common discrete stochastic variables that are worth discussing separately. The chapter on [Discrete Stochastic Variables] covers 4 important ones. The following sections will assume familiarity with these variables. 
+
+
+
+## Expectation and Variance
+
+As is often the case in mathematics, we like to define general operators on objects to understand their properties. Firstly, note that we can use functions of stochastic variables to build other stochastic variables.
+
+```{example, name = "Simple Functions of a Stochastic Variable"}
+Consider the following pmf
+
+$$
+p_X(x) = \begin{cases}
+1/9 & x \in \{ -4, -3, -2, -1, 0, 1, 2, 3, 4\} \\
+0 & \text{otherwise}
+\end{cases}
+$$
+Here are two functions of $X$ and their probability mass functions:
+
+a) $Y=|X| \implies p_Y(y)=\begin{cases}2/9 & y \in \{1,2,3,4\} \\ 1/9 & y=0 \end{cases}$
+b) $Z=X^2 \implies p_Z(z)=\begin{cases}2/9 & z \in \{1,4,9,16\} \\ 1/9 & z=0 \end{cases}$
+
+```
+
+A special class of functions, known as moments, include two operators, **expectation** and **variance**.
+
+```{definition, name = "Expectation"}
+
+The expectation of a function $g$ of a stochastic variable $X$ is
+
+$$
+\mathbb{E}[g(X)] \equiv \sum_{x \in \Omega} g(x) \cdot \mathbb{P}(X=x)
+$$
+
+```
+
+
+```{theorem, name = "Linearity of Expectation"}
+$$
+\mathbb{E}\left[aX+bY\right] = a\mathbb{E}[X]+b\mathbb{E}[Y]
+$$
+```
+
+```{marginfigure}
+
+The $n$th moment about $x_0$ is defined as $\mathbb{E}[(x-x_0)^n]$. 
+
+```
+
+
+```{definition, name = "Variance"}
+
+The variance is the 2nd moment about the mean.
+
+\begin{equation}
+\mathrm{Var}[X] \equiv \mathbb{E}[(X-\mathbb{E}[X])^2]
+(\#eq:variance-def)
+\end{equation}
+
+```
+
+Unfortunately, the definition given above in Equation \@ref(eq:variance-def) tends to be difficult to compute by hand. A little algebra results in a computationally simpler alternative. 
+
+
+```{lemma, name = "Determinism of Expectation of Expectation"}
+$$
+\mathbb{E}\Big[\mathbb{E}[X]\Big] = \mathbb{E}[X]
+$$
+```
+
+```{theorem, name = "Computationally Simpler Alternative for Variance"}
+
+\begin{equation}
+\mathrm{Var}[X] = \mathbb{E}[X^2] - \mathbb{E}\left[X\right]^2
+(\#eq:variance-comp)
+\end{equation}
+
+```
+
+```{proof}
+\begin{align*}
+\mathrm{Var}[X] &= \mathbb{E}\Big[X^2 + \mathbb{E}[X]^2 - 2X\mathbb{E}[X]\Big] \\
+&= \mathbb{E}[X^2] + \mathbb{E}[X]^2 - 2\mathbb{E}[X]\mathbb{E}[X] \\
+&= \mathbb{E}[X^2] - \mathbb{E}[X]^2.
+\end{align*}
+```
+
+
+```{marginfigure}
+
+As an aside, the indicator function $\mathbb{1}_A$ indicates whether certain events are in $A$ or not.
+
+$$
+\mathbb{1}_A(\omega) = \begin{cases} 1 & \omega \in A \\ 0 & \omega \not\in A \end{cases}
+$$
+
+As a result,
+  
+$$\mathbb{E}[\mathbb{1}_A(\omega)] = \mathbb{P}(A)$$ $$\mathrm{Var}[\mathbb{1}_A(\omega)] = P(A)(1-P(A))$$
+
+```
+
+
+
+|Distribution|Expectation|Variance|
+|--------------------|-----------|--------|
+|Binomial|$np$|$np(1-p)$|
+|Geometric|$1/p$|$(1-p)/p^2$|
+|Poisson|$\lambda$|$\lambda$|
+
+Table: Expectation and Variance of Common Distributions
+
+## Probability Density Functions
+
+Now we turn to stochastic variables that return values on an interval of the real number line. We can use our knowledge of discrete stochastic variables to find analagous versions for continuous stochastic variables. Instead of a probability mass function, we call the function for a continuous stochastic variables **probability density function** (pdf).
+
+```{marginfigure}
+**Notation**. Probability density functions are typically denoted with lowercase English letters, most commonly $f$.
+
+```
+
+The requirement that the total probability must add up to unity is still in place:
+
+$$
+\int_{\mathbb{R}} f_X(x)\,\mathrm{d}x=1
+$$
+
+However, asking whether $X=x$ is no longer a well-formed question, since $X$ has a continuum. The probability that $X$ takes on the exact value $x$ is nil. Therefore, probabilities of a continuous stochastic variable may only be queried in the following form.
+
+$$
+\mathbb{P}(a\leq X \leq b) = \int\limits_{a}^{b}f_X(x)\,\mathrm{d}x
+$$
+
+By extension, the expectation of a pdf can be computed as
+
+$$
+\mathbb{E}[X] = \int_{\mathbb{R}}xf_X(x)\,\mathrm{d}x
+$$
+
+The chapter on [Continuous Stochastic Variables] discusses 3 important stochastic variables: uniform, exponential, and Gaussian. These variables will come up later, but for the sake of cleanliness, the proofs and computations have been moved into the appendix.

@@ -1,0 +1,47 @@
+# Source Coding
+
+## Encoding the English Alphabet
+
+Here's a practical problem we would like to solve: Given the 26 letters of the English alphabet and assuming letters are coming independently, design an encoder (a schema that converts text into a binary message) to minimize the expected number of bits used per letter. Essentially, can we find an encoding of the English alphabet using a zero-order approximation?
+
+We'll start with a simple solution:
+
+1. Compute how many bits it would take if each letter had the same number of bits. The number of bits needed is given by $\lceil \log_2(26)\rceil$[^ceil]
+2. Then, _A_ becomes `00000`, _B_ becomes `00001`, and so on and so forth.
+3. Store the characters and their numbers in a matrix. The matrix serves as both the encoding and decoding scheme.
+
+[^ceil]: The upper brackets denote the ceiling function or greatest integer function. The number of bits must be a natural number.
+
+Solution #1 is actually the best approach if each character had an equal probability (i.e. $1/26$) of appearing. However, certain characters tend to appear more than others. Therefore, using the same number of bits to represent a commonly occuring character like _e_ and a infrequent character like _z_ is not making the best use of each bit.
+
+Our next solution will take into account frequency. The three most common letters in the English alphabet are _E_, _T_, and _A_. Assign _E_ the value `0`, _T_ the value `1`, and _A_ the value `10`. However, it now becomes impossible to determine whether `10` is a "TA" message or an "E" message. We need to avoid such prefix-collisions to interpret messages without ambiguity.
+
+## Huffman Coding
+
+The solution devised by David Huffman has optimality given certain conditions. First, we'll need to describe the algorithm of Huffman coding.
+
+\begin{algorithm}[H]
+    \SetAlgoLined
+    \KwData{A map $m: \Sigma \to [0,1]$}
+    \KwResult{A binary tree representing an encoding scheme}
+    \While{$|\mathrm{preimage}(m)| > 1$}{
+        $a \gets \arg\min m$\;
+        Remove $a$ from $m$\;
+        $b \gets \arg\min m$\;
+        Remove b from $m$\;
+        Insert symbol $ab$ with frequency $m(a)+m(b)$\;
+    }
+\caption{Huffman Coding}
+\end{algorithm}
+
+```{theorem, name = "Huffman Coding Optimality"}
+
+If $X$ is a random variable, and $L$ is the expected number of bits per letter using Huffman coding,
+
+$$
+H(X) \leq L \leq H(X)+1
+$$
+
+```
+
+An intuitive video explaining Huffman coding can be found here: https://www.youtube.com/watch?v=JsTptu56GM8 . A Python program is available here: https://gist.github.com/ashwinreddy/8b8eb194bc3bf264a81affb5b6cdff06 .

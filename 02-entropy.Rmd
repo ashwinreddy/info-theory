@@ -1,0 +1,205 @@
+# Entropy
+
+Why did we spend the time reviewing probability for information? The answer lies in Proposition \@ref(prp:stochasticity-of-info) below:
+
+```{proposition, stochasticity-of-info, name = "Stochasticity of Information"}
+
+Information can be modelled as samples from a stochastic source.
+
+```
+
+Consider the fact that many emails you send will have a typical structure: a greeting, a body of text, a conclusion. Or that the changes in the frames of a video tend to be rather small. Intuitively, we have a sense that the repetitive elements of data are not information-dense, and therefore, when we transmit this information, we should really only focus on what is novel about each message. 
+
+Shannon's original example was to show that text can modelled probabilistically in this way. Let's imagine that we want to generate some text that looks like English. We can first start by creating a sample space $\Omega$ that includes letters and spaces. Then, we sample randomly. This is callled a zero-order approximation. Next, we can refine the approximation by making characters more or less frequent. Adapting the probability based on the frequency with which that character appears in a corpus (e.g. make _e_ show up about 12% of the time) is called a first-order approximation. An even more refined approach would consider digram (2-character sequences) and their frequencies.
+
+## Surprisal
+
+Now that you're convinced that information can be modelled stochastically, we can consider what information means.
+
+```{example, name = "The Q-U Question"}
+
+Consider a game where you predict the next letter of a piece of English text given all the previous letters. You are given the phrase `elephants are q`. You know that the letter `q` is nearly always followed by a `u`. You would then predict that the next letter is a `u`, and you would be confident in your guess. If, by some odd reason, that next letter is not a `u`, you would be "surprised". 
+
+```
+
+What we've captured in this example is a working conception of information.
+
+```{definition, name = "Information"}
+
+New information (which is really the only kind of information we care about) **is** the "surprisal" of an information source. The more surprised you are, the more information you gain, since you didn't expect to see that result.
+
+```
+
+We now need a way of quantifying surprisal/information. The core of our theory is that surprisal should be inversely correlated with the probability of occurence. So naturally, we gravitate towards picking something like $1/p$ as our information function. Consider the limit cases, however, of literally using $1/p$. When $p=0$, we have infinite surprisal, and when $p=1$, we have 1 unit of surprisal. If something is guaranteed to happen, 1 unit is an odd baseline to use. As a result, we pick $\log(1/p)$, which is more attractive for a few reasons.
+
+1. Continuity
+2. Monotonically decreasing in $p$
+3. Never negative
+4. With $p=1$, information becomes 0
+5. Information due to independent events is additive
+
+```{marginfigure}
+Which base we pick is entirely arbitrary as long as it makes sense (sensible options include 2, 10, and $e$). The value of entropy changes predictably with a change of base, so it really doesn't pose much of a problem. In most cases, we will pick base 2, since we like to consider binary digits (abbreviated bits).
+```
+
+To each event, we now attach a surprisal value. To characterize a stochastic variable as a whole, we now define entropy.
+
+```{definition, name = "Entropy"}
+
+The entropy $H$ of a stochastiv variable $X$ is the expectation of surprisal of $X$. 
+
+\begin{align*}
+H(X) &\equiv \mathbb{E}\left[\log \frac{1}{\mathbb{P}(X=x)}\right]\\
+&= \sum_i p_i \log(1/p_i) \\
+&= -\sum_i p_i \log p_i
+\end{align*}
+  
+```
+
+```{marginfigure}
+
+Shannon's formula for entropy actually has a similarity to thermodynamic entropy:
+
+$$
+S = - k_B \sum p_i \ln p_i
+$$
+
+```
+
+```{example, name = "Entropy of Bernoulli Distribution"}
+$$
+H(X) = p \log \frac{1}{p} + (1-p)\log \frac{1}{1-p}
+$$
+```
+
+Plotting for every possible value for $p$, we yield a nice graph:
+
+```{r, fig.cap = "Bernoulli Entropy", echo = FALSE}
+curve(x * log(1/x) + (1-x)*log(1/(1-x)), from=0,to=1,col="blue", ylab="Entropy", xlab="Probability")
+```
+
+When $p$ is 0 or 1, we need 0 bits of information, which makes sense because the result was guaranteed. As we go more towards complete randomness (which colloquially, we might also call "entropy" from a physics standpoint), we need more bits to represent the possibilites (a maximum of 1 in this case).
+
+But what does it mean to have 0.47 bits, which we might have if $p(\text{heads})=0.9$? Imagine that we had a 100-long sequence of coin flips and we transmitted the information. For the purely random case (i.e. using a fair coin), we would need 100 bits. However, for this extremely unfair case, we could get away with 47 bits without losing any information (on average).
+
+## Bit Representations
+
+While we will be overloading the word bit in different contexts in this book, it is useful to understand what it represents. As noted before, bit is an abbreviation of "binary digit." When we talk about a bit in computer science, we typically mean 0 or 1, low voltage or high voltage, etc. Here, we take a bit to mean something like the answer to a single yes or no question with yes and no equally likely. In other words, a coin toss. That is, one bit captures the information of a Bernoulli distribution with $p=0.5$. From there, we can meaningfully interpret values of entropy as telling us roughly how many of these yes/no questions or coin flips or sequence of binary digits are needed to transmit the information on average.
+
+```{example, fair-dice-roll, name = "Entropy of a Fair Dice Roll"}
+
+Find the entropy of a fair dice roll.
+
+
+```
+
+```{solution}
+
+
+Note that entropy does not care about the actual values of $X$. Therefore, the entropy is computed as 
+
+\begin{align*}
+H(x) &= \sum_x p(x)\log(1/p(x)) \\
+&= \sum_{x=1}^6 \frac{1}{6}\log(6) \\
+&= 6\cdot\frac{1}{6}\log(6) \\
+&= \log 6 \approx 2.585
+\end{align*}
+
+```
+
+```{exercise, name = "Double the Possibilities"}
+
+Repeat Example \@ref(exm:fair-dice-roll) except that there are double the number of possible values (i.e. a 12-sided die).
+
+```
+
+```{solution}
+
+Intuitively, we just need to add one more bit to flip between the first 6 and last 6 values. Mathematically, we consider $\log(12)$, which by log properties is $\log(2) + \log(6)  = 1 + \log(6)$.
+
+```
+
+## Jensen's Inequality
+
+```{definition, name = "Convex Function"}
+
+A function $f(x)$ is convex on the interval $(a,b)$ if it is concave up on that interval (i.e. second derivative is positive). Alternatively, it obeys the property that for all $(x_1, x_2)$ within the interval $(a,b)$ and for all $\lambda$ normalized between 0 and 1,
+
+$$
+f(\lambda x_1 + (1-\lambda)x_2) \leq \lambda f(x_1) + (1-\lambda) f(x_2)
+$$
+
+```
+
+```{theorem, name = "Jensen's Inequality"}
+For a stochastic variable $X$ and a function $f$,
+
+$$
+\mathbb{E}[f(X)] \geq f(\mathbb{E}[X])
+$$
+```
+
+```{theorem}
+If $X$ assumes real values $\{x_1, \dots, x_n\}$ and $0 \leq H(X) \leq \log r$. Then, 
+
+$$
+\forall\, 1 \leq i \leq n,  p_i = \frac{1}{r} \iff  H(X)=\log r 
+$$
+  
+```
+
+## Joint Entropy
+
+```{definition, name = "Joint Entropy"}
+$$
+H(X,Y) = -\sum_{x}\sum_{y} \mathbb{P}(x,y)\log(p(x,y))
+$$
+```
+
+```{definition, name = "Conditional Entropy"}
+$$
+H(Y | X) = \sum_x p(x) H(Y | X = x)
+$$
+```
+
+```{theorem}
+\begin{align*}
+H(X,Y) &= H(X) + H(Y  | X) \\
+&= H(Y) + H(X | Y)
+\end{align*}
+```
+
+```{proof}
+
+```
+
+## Differential Entropy
+
+Differential entropy is the continuous version of discrete entropy.
+
+```{proof}
+
+The probability that $X^\Delta$ is in the $i$th bin is $p(x_i)\Delta x$. Then,
+
+\begin{align*}
+H(X^\Delta) &= - \sum_i p(x_i) \Delta x \log\left(p(x_i)\Delta x\right) \\
+&= \sum_i \left[ p(x_i)\Delta x \log \frac{1}{p(x_i)} + p(x_i)\Delta x \log \frac{1}{\Delta x} \right]
+\end{align*}
+
+```
+
+
+$$
+h(x) \equiv -\int_{\mathbb{R}} f(x)\log f(x) \,\mathrm{d}x
+$$
+```{example, name = "Differential Entropy of Uniform Stochastic Variable"}
+
+On the interval $[0,a]$,
+
+$$
+h(x) = \int\limits_0^a \frac{1}{a} \log a \,\mathrm{d}x = \log a
+$$
+
+```
+
+Notice that if $a \leq 1$, we have 0 and negative values of entropy, so differential entropy really isn't like discrete entropy.

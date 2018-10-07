@@ -1,0 +1,237 @@
+# (PART\*) Appendix {-}
+
+# (APPENDIX) Appendix {-}
+
+# Discrete Stochastic Variables
+
+
+## Bernoulli Distribution
+
+A Bernoulli distribution represents the number of heads in tossing a potentially unfair coin once. The unfairness is characterized by a probability $p$ that the coin lands heads. Therefore, the probability that the coin lands tails is $1-p$.
+
+```{definition, name = "Bernoulli Distribution"}
+
+\begin{equation}
+\mathrm{Bern}(x) \equiv \begin{cases}
+p & x = 1 \\
+1-p & x = 0
+\end{cases}
+\end{equation}
+
+```
+
+## Binomial Distribution
+
+Next, the binomial distribution can be imagined as tossing the same unfair coin $N$ times and counting the number of heads. The probability that the number of heads is nil is $(1-p)^N$ since the implication is that the coin came up tails every single time. The probability that the number of heads is exactly one is $Np(1-p)^{N-1}$. This is because it must have come up heads once with probability $p$ and tails $N-1$ times with probability $1-p$. Additionally, the one heads could come up at any point in the sequence, which introduces a factor of $\binom{N}{k}$. 
+
+```{definition, name = "Binomial Distribution"}
+
+\begin{equation}
+\mathbb{P}(X=k; n, p) \equiv \binom{n}{k} p^k (1-p)^{n-k}
+\end{equation}
+
+```
+
+You can check that $\mathbb{P}(X=1; 1, p) = \mathrm{Bern}(p)$
+
+## Geometric Distribution
+
+In a geometric distribution, we keep tossing the coin until there is one heads. 
+
+```{definition, name = "Geometric Distribution"}
+
+\begin{equation}
+p_X(x) = (1-p)^{x-1}p
+\end{equation}
+
+```
+
+## Poisson Distribution
+
+```{definition, name = "Poisson Distribution"}
+
+$$
+p_X(x = k) = \frac{\lambda^k}{k!}e^{-\lambda}.
+$$
+  
+```
+
+
+Similar to a binomial distribution, the Poisson distribution can be thought of as the number of replacements needed for a biased lightbulb (rather than a coin) in a given amount of time. In this case, we are typically dealing with a large $n$ and a small $p$, which leads to a "moderate" $np$.[^moderate] If $\lambda \equiv np$ (can be thought of as the expected number of times the bulb will burn out),
+
+
+[^moderate]: I have no idea what this means.
+
+```{proof}
+
+Start with binomial distribution, using $\lambda$ instead of $p$:
+
+\begin{align*}
+p_X(x=k) &= \lim_{n\to\infty}\lim_{p\to 0} \frac{n!}{(n-k)!k!}\binom{\lambda}{n}^k\left(1-\frac{\lambda}{n}\right)^{n-k} \\
+&= \lim_{n\to\infty}\lim_{p\to 0} \frac{n(n-1)\dots (n-k+1)}{n^k}\cdot\frac{\lambda^k}{k!}\frac{(1-\lambda/n)^n}{(1-\lambda/n)^k)} \\
+&= e^{-\lambda}\lambda^k/k!
+\end{align*}
+```
+
+```{marginfigure}
+
+What can be modelled with a Poisson distribution?
+
+- Number of customers entering a bank in a given period of time
+- Number of misprints on a page
+- Number of alpha particles discharged from a radioactive substance.
+
+```
+
+# Continuous Stochastic Variables
+
+## Uniform
+
+
+```{definition, name = "Uniform Stochastic Variable"}
+For the interval $[a,b]$, the uniform stochastic variable assigns all $x$ in the interval the same probability, so that
+
+$$
+f_X(x) = \frac{1}{b-a}
+$$
+```
+
+
+```{r, echo = FALSE, fig.cap = "Example of Uniform stochastic variable"}
+curve((x-x+1)/(5-1), from=1, to=5, xlab="X", ylab="P(X)", col="blue")
+```
+
+Intuitively, the expectation for the uniform stochastic variable on the interval $[a,b]$ is $(a+b)/2$.
+
+```{proof}
+\begin{align*}
+\mathbb{E}[X] &= \int_{\mathbb{R}}xf_X(x)\,\mathrm{d}x \\
+&= \int_{\mathbb{R}} x\frac{1}{b-a}\,\mathrm{d}x \\
+&= \frac{1}{b-a}\int\limits_{a}^b{x\,\mathrm{d}x} \\
+&= \frac{1}{b-a}\left[\frac{b^2-a^2}{2}\right] \\
+&= \frac{(b+a)(b-a)}{2(b-a)} \\
+&= \frac{b+a}{2}
+\end{align*}
+```
+
+The variance may also be computed using the formula in Equation \@ref(eq:variance-comp).
+
+\begin{align*}
+\mathrm{Var}[X] &= \mathbb{E}[X^2] - \mathbb{E}[X]^2 \\
+&= \mathbb{E}[X^2] - \left(\frac{a+b}{2}\right)^2 \\
+&= \int\limits_a^b{x^2f_X(x)\,\mathrm{d}x} - \left(\frac{b+a}{2}\right)^2 \\
+&= \frac{1}{b-a}\left[\frac{b^3-a^3}{3}\right] - \left(\frac{b+a}{2}\right)^2 \\
+&= \frac{1}{12}(a-b)^2
+\end{align*}
+
+
+## Exponential
+
+
+```{definition, name = "Exponential Stochastic Variable"}
+$$
+f_X(x) = \begin{cases}
+\lambda e^{-\lambda x} & x \geq 0 \\
+0 & x < 0
+\end{cases}
+$$
+```
+
+```{proof, name = "Expectation of Exponential Stochastic Variable"}
+\begin{align*}
+\mathbb{E}[X] &= \int\limits_0^\infty{\lambda e^{-\lambda x}\,\mathrm{d}x} \\
+&= \lambda \int\limits_0^\infty{e^{-\lambda x}\,\mathrm{d}x} \\
+\end{align*}
+The integral can be evaluated by using integration by parts with $u=x$ and $\mathrm{d}v = e^{-\lambda x}\,\mathrm{d}x$. We record $\mathrm{d}u= \mathrm{d}x$ and $v = -\frac{e^{-\lambda x}}{\lambda}$.
+\begin{align*}
+\int\limits_0^\infty{e^{-\lambda x}\,\mathrm{d}x} &= \left[-\frac{x e^{-\lambda x}}{\lambda}\right]_{0}^\infty + \frac{1}{\lambda}\int\limits_0^\infty e^{-\lambda x}\,\mathrm{d}x \\
+&= \frac{1}{\lambda}\left[-\frac{e^{-\lambda x}}{\lambda}\right]_0^\infty \\
+&= \frac{1}{\lambda^2}
+\end{align*}
+Finally, multiply the $\lambda$ from the original expression to obtain $1/\lambda$.
+```
+
+```{definition, name = "Memoryless Property"}
+A stochastic variable is memoryless iff
+$$
+p(x>s+t\, |\, x > t) = p (x>s) \qquad s,t\geq 0
+$$
+```
+
+The exponential stochastic variable is memoryless.
+
+## Gaussian Distribution
+
+We now give a separate treatment for the very common Gaussian distribution (aka normal distribution). A Gaussian or normal distribution is essentially what people imagine when they are talking about a "bell curve." The base function is $\exp(-x^2/2)$, whose graph is given in Figure \@ref(fig:gaussian).
+
+```{r, gaussian, echo = FALSE, fig.cap = "Simple Gaussian"}
+curve(exp(-x^2/2), from=-3,to=3,col="blue")
+```
+
+This function is known as the **standard normal**. However, we have not yet checked that it integrates to unity.
+
+```{proof, name = "Integral of Gaussian"}
+
+We want to find $I = \int_\mathbb{R} f(x)\,\mathrm{d}x$. However, a simplified $I$ is not possible as is. The solution is a bit tricky.
+
+\begin{align*}
+I &= \sqrt{\left(\int_\mathbb{R} f(x)\,\mathrm{d}x\right)\left( \int_\mathbb{R} f(x)\,\mathrm{d}x \right)} \\
+&= \sqrt{\left(\int_\mathbb{R} f(x)\,\mathrm{d}x\right)\left( \int_\mathbb{R} f(y)\,\mathrm{d}y \right)} \\
+&= \sqrt{\iint_{\mathbb{R}\times\mathbb{R}} \left[ f(x)f(y) \right] \,\mathrm{d}x\,\mathrm{d}y } \\
+&= \sqrt{\iint_{\mathbb{R}\times\mathbb{R}} e^{-(x^2+y^2)/2}\,\mathrm{d}x\, \mathrm{d}y} \\
+&= \sqrt{\int\limits_0^\infty\int\limits_0^{2\pi} e^{-r^2/2}r\,\mathrm{d}\theta\,\mathrm{d}r } \\
+&= \sqrt{\left(\int\limits_0^{2\pi}\mathrm{d}\theta \right)\left(\int\limits_0^\infty \left[e^{-r^2/r}r\right]\mathrm{d}r\right) } \\
+&= \sqrt{2\pi \left(e^{-r}\left(-1-r\right)\right)\Big|_{0}^{\infty} } \\
+&= \sqrt{2\pi}
+\end{align*}
+
+```
+
+The general form of the Gaussian includes a factor of $1/\sqrt{2\pi}$ for normalization:
+
+$$
+f_X(x) = \frac{1}{\sigma\sqrt{2\pi}}e^{-(x-\mu)^2/2\sigma^2}
+$$
+
+Properties:
+
+1. $\mathbb{E}[X] = \mu$
+2. $\mathrm{Var}[X] = \sigma^2$
+
+```{proof, name = "Mean of Gaussian Stochastic Variable"}
+
+To show that the mean is $\mu$, we first construct a new stochastic variable that is a function of $X$.
+
+$$
+Z  = \frac{X-\mu}{\sigma}
+$$
+
+$$
+\mathbb{E}[Z] = \frac{1}{\sqrt{2\pi}}\int\limits_{-\infty}^{\infty}ze^{-z^2/2}\,\mathrm{d}z
+$$
+If we look at a plot of the function $\exp(-x^2/2)$ as in Figure \@ref(fig:gaussian), it becomes apparent that this function is even. Multiplied by an odd function $z$, the integrand is odd with endpoints $[-a,a]$ (in this case, $a \to \infty$). Thus, $\mathbb{E}[Z]=0$. Performing the appropriate shift, we find that this implies that $\mathbb{E}[X] = \mu$.
+
+```
+
+Similarly, we can compute the variance of $Z$.
+
+$$
+\mathrm{Var}[Z] = \sigma^2
+$$
+
+# Extra Formalism
+
+## Kolmogorov Axioms {#kmaxm}
+
+
+There are three Kolmogorov axioms:
+  
+1. $\nexists A \in \Omega, \mathbb{P}(A)  < 0$ (There are no events with a negative probability of happening)
+  
+2. $\mathbb{P}(\Omega) = 1$ (The probability of _something_ in the sample space happening must be 100\%)
+
+3. For a sequence of disjoint[^disjoint] sets $A_1, A_2, \dots$, $\mathbb{P}\left( \bigcup_i A_i  \right) =  \sum_i \mathbb{P}(A_i)$ (The probability of mutually exclusive events happening is the total probability of any one happening)
+
+
+
+[^disjoint]: Disjoint sets have no elements in common. If $A$ and $B$ are disjoint, $A \cap B = \emptyset$
