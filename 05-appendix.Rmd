@@ -97,8 +97,19 @@ $$
 ```
 
 
-```{r, echo = FALSE, fig.cap = "Example of Uniform stochastic variable"}
-curve((x-x+1)/(5-1), from=1, to=5, xlab="X", ylab="P(X)", col="blue")
+```{python, echo = FALSE, fig.cap = "A Uniform Distribution is Constant"}
+
+fig, ax = plt.subplots(figsize=(8,5))
+
+x = np.linspace( 0 , 5 )
+y = 0.2 * np.ones(x.shape)
+
+axes = plt.gca()
+axes.set_ylim([0,1])
+plt.plot(x, y)
+plt.ylabel("Probability")
+plt.title("Uniform Stochastic Distribution")
+plt.show()
 ```
 
 Intuitively, the expectation for the uniform stochastic variable on the interval $[a,b]$ is $(a+b)/2$.
@@ -226,7 +237,7 @@ $$
 
 There are three Kolmogorov axioms:
   
-1. $\nexists A \in \Omega, \mathbb{P}(A)  < 0$ (There are no events with a negative probability of happening)
+1. $\forall A \in \Omega, \mathbb{P}(A)  \geq 0$ (There are no events with a negative probability of happening)
   
 2. $\mathbb{P}(\Omega) = 1$ (The probability of _something_ in the sample space happening must be 100\%)
 

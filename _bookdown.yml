@@ -1,0 +1,4 @@
+book_filename: "info-theory.Rmd"
+output_dir: "book"
+delete_merged_file: true
+clean: ["book/"]

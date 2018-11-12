@@ -1,0 +1,256 @@
+# Coupled Stochastic Variables
+
+## Conditional Probability
+
+Given the joint probability function $p(X=x,Y=y)$ and a function $Z=g(X,Y)$ for random variables $X$ and $Y$, can we find the probability function for $Z$?
+
+```{definition, name = "Cumulative Distribution Function"}
+
+$$
+F_X(x) \equiv \Pr(X \leq x)
+$$
+
+```
+
+Mathematically,
+$$
+F_X(x) = \int\limits_{-\infty}^x f_X(u) \dif u
+$$
+
+Therefore,
+
+$$
+f_X(x) = \od{F_X(x)}{x}
+$$
+
+So if we can find $F_X(x)$, we can get $f_X(x)$ pretty easily. Let $D$ be a region in the $XY$ plane where $g(x,y) \leq z$ is satisfied. Then,
+
+$$
+F_Z(z) = \int_{D} f(x,y) \dif A \implies f_Z(z) = \od{}{z} \int_{D} f(x,y) \dif A
+$$
+
+```{example}
+Find the probability function for $Z=X+Y$.
+```
+
+```{solution}
+
+\begin{align*}
+f_Z(z) &= \od{}{z} \int_\RR\int_{-\infty}^{z-x} f(x,y) \dif y \dif x \\
+&= \int_\RR \left[ \pd{}{z}\int_{-\infty}^{z-x} f(x,y) \dif y \right] \dif x \\
+&= \int_\RR f(x, z - x) \dif x \\
+\end{align*}
+
+If we further assume $X$ and $Y$ are independent, then
+
+$$
+f_Z(z) = \int_\RR f_X(x)f_Y(z-x) \dif x = (f_Y * f_X)(z) = (f_X * f_Y)(z)
+$$
+
+```
+
+## Relative Entropy & Mututal Information
+
+```{definition, name = "Relative Entropy / Kullback-Leibler Divergence"}
+
+$$
+D_{KL}(P \parallel Q) \equiv \sum_x p(x) \log \frac{p(x)}{q(x)} = \mathbb{E}_p \left[ \log \frac{p(x)}{q(x)} \right]
+$$
+
+```
+
+The KL divergence is the minimum possible inefficiency of using 
+
+```{example}
+Let $X$ be $\operatorname{Bern}(r)$ and $Y$ be $\operatorname{Bern}(s)$. Find $D_{KL}(X \parallel Y)$
+```
+
+```{solution}
+$$
+D(X \parallel Y) = (1-r)\log \frac{1-r}{1-s} + r\log \frac{r}{s}
+$$
+```
+
+```{python, echo = FALSE}
+
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
+
+
+
+fig = plt.figure()
+ax = fig.gca(projection='3d')
+
+delta = 0.01
+X = np.linspace(delta, 1 - delta)
+Y = np.linspace(delta, 1 - delta)
+X, Y = np.meshgrid(X, Y)
+Z = (1-X) * np.log( (1-X)  / (1-Y) ) + X * np.log( X / Y)
+
+# Plot the surface.
+ax.plot_surface(X, Y, Z, linewidth=0, antialiased=False)
+
+ax.view_init(elev=32, azim=-143)
+
+plt.show()
+
+```
+
+```{definition, name = "Mutual Information"}
+$$
+I(X; Y) \equiv D_{KL}(p(x,y) \parallel p(x)p(y))
+$$
+```
+
+```{lemma}
+\begin{align*}
+I(X; Y) &= H(X) - H(X|Y) \\
+&= H(Y) - H(Y|X) \\
+&= H(X)+H(Y) - H(X,Y)
+\end{align*}
+```
+
+
+```{example}
+
+Find $I(X; Y)$ for the table below. 
+
+```
+
+
+| |1|2|3|4|
+|-|-|-|-|-|
+|1|1/8|1/16|1/32|1/32|
+|2|1/16|1/8|1/32|1/32|
+|3|1/16|1/16|1/16|1/16|
+|4|1/4|0|0|0|
+
+Table: Joint Entropy for $X$ (columns) and $Y$ (rows)
+
+```{solution}
+$$
+H(X) = \sum p(x) \log \frac{1}{p(x)} = 14/8
+$$
+  
+$$
+H(X|Y) = 11/8
+$$
+  
+Then, $I(X;Y)=3/8$
+```
+
+```{theorem, name = "Chain Rule for Entropy"}
+
+Let $X_1, \dots, X_n$ be drawn according to $p(x_1, \dots, x_n)$. Then,
+
+$$
+H(X_1, \dots, X_n) = \sum_{i=1}^n H(X_i | X_{i-1}, \dots, X_1)
+$$
+
+```
+
+```{proof}
+First, recall that
+
+$$
+H(X_1, X_2) = H(X_1) + H(X_2 | X_1)
+$$
+  
+$$
+H(X_1, X_2, X_3) = H(X_1) + H(X_2, X_3 | X_1)
+$$
+```
+
+```{theorem, name = "Information Inequality"}
+
+$$
+D(p \parallel q) \geq 0
+$$
+
+```
+
+```{proof}
+\begin{align*}
+-D_{KL}(p \parallel q) &= - \sum p(x) \log \frac{p(x)}{q(x)} \\
+&= \sum p(x) \log \frac{q(x)}{p(x)} \\
+&\leq \log \sum p(x) \frac{q(x)}{p(x)} \\
+&= \log \sum q(x) \\
+&= \log 1 \\
+&= 0
+\end{align*}
+
+$$
+-D_{KL}(p \parallel q) \leq 0 \implies D_{KL}(p \parallel q) \geq 0
+$$
+```
+
+```{corollary}
+$$
+  I(X; Y) \geq 0
+$$
+```
+
+```{exercise}
+
+Show that $H(X) \leq \log \lvert \mathscr{H}\rvert$. $\lvert \mathscr{H} \rvert$ denotes the number of elements in the range of $X$ of equality iff X has a uniform distribution.
+
+```
+
+```{proof}
+
+\begin{align*}
+D_{KL}(p \parallel \mathscr{U}) &= \mathbb{E}_p \left[\log\frac{p(x)}{q(x)}\right] \\
+&= \mathbb{E}_p \left[ \log \left(\lvert\mathscr{H}\rvert p(x)\right)  \right] \\
+&= \sum p(x) \log \left(\lvert\mathscr{H}\rvert p(x)\right) \\
+&= \sum p(x) \left( \log \lvert \mathscr{H} \rvert + \log p(x)  \right) \\
+&= \sum p(x) \log \lvert \mathscr{H} \rvert + \sum p(x) \log p(x) \\
+&= \log \lvert \mathscr{H} \rvert - H(X)
+\end{align*}
+
+```
+
+
+```{lemma}
+
+The following statement holds with equality iff $X$ and $Y$ are independent. 
+
+$$
+H(X|Y) \leq H(X)
+$$
+  
+```
+
+```{marginfigure}
+_Intuition_. Knowing another R.V. value cannot, on average, increase the surprisal of a R.V.
+```
+
+```{exercise}
+Do something with the table below.
+```
+
+|X|1|2|
+|-|-|-|
+|Y| | |
+|1| 0 | 3/4|
+|2| 1/8 | 1/8|
+
+```{solution}
+
+$$
+H(X) = \sum p(x) \log \frac{1}{p(x)} = \frac{1}{8} \log 8 + \frac{7}{8}\log \frac{8}{7} \approx .544
+$$
+
+$$
+H(X | Y = 1) = \frac{3}{4}\log \frac{4}{3} \approx .311
+$$
+  
+$$
+H(X | Y = 2) = 1
+$$
+  
+$$
+H(X|Y) \approx 0.483
+$$
+
+```

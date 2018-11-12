@@ -46,6 +46,44 @@
 % citations
 
 % pandoc syntax highlighting
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
 
 % longtable
 \usepackage{longtable,booktabs}
@@ -73,7 +111,7 @@
 \usepackage{indent first} \usepackage{tikz-cd} \usepackage{algorithm2e}
 \usepackage{mdframed} \usepackage{cancel}
 \hypersetup{colorlinks=true, urlcolor=blue} \newcommand{\RR}{\mathbb{R}}
-\usepackage{qtree}
+\usepackage{qtree} \usepackage{commath} \usepackage{mathrsfs}
 % end of header-includes
 
 \usepackage{amsthm}
@@ -228,7 +266,7 @@ number of 5's rolled could also be a stochastic variable.
 
 A stochastic variable can either be discrete, taking on values from a
 countable set or continuous, taking on values on an interval from the
-real number line.
+real number line \(\mathbb{R}\).
 
 \section{Probability Measure}\label{probability-measure}
 
@@ -296,12 +334,13 @@ p_X(x) = \Pr(X=x)
 
 \section{Bayes' Theorem}\label{bayes-theorem}
 
-When events \(A\) and \(B\) are not independent, knowing what \(A\) is
-gives us information about what \(B\) might be (and vice versa). The
-notation \(\Pr(A|B)\) denotes the probability of \(A\) given that or
-conditioned upon \(B\) occuring. Consider that for \(A\) and \(B\) to
-happen that \(B\) must first happen and \(A\) must happen under those
-circumstances.
+Events \(A\) and \(B\) are said to be independent if the occurence of
+one does not affect the probabilities of the other. When events \(A\)
+and \(B\) are not independent, knowing what \(A\) is gives us
+information about what \(B\) might be (and vice versa). The notation
+\(\Pr(A|B)\) denotes the probability of \(A\) given that or conditioned
+upon \(B\) occuring. Consider that for \(A\) and \(B\) to happen that
+\(B\) must first happen and \(A\) must happen under those circumstances.
 
 \begin{equation}
 \Pr(A \cap B)  = \Pr(B) \cdot \Pr\left(A | B\right) 
@@ -438,8 +477,37 @@ stochastic variable \(X\) is
 \]
 \EndKnitrBlock{definition}
 
+Expectation returns the mean of the function \(g\), that is, what we
+expect the average value of \(g(X)\) to be if we run the experiment an
+infinite number of times.
+
+\BeginKnitrBlock{exercise}[Expected Value of a Die]
+\protect\hypertarget{exr:unnamed-chunk-23}{}{\label{exr:unnamed-chunk-23}
+\iffalse (Expected Value of a Die) \fi{} } Find \(\mathbb{E}[X]\) where
+\(X\) is the value of a roll of a die.
+\EndKnitrBlock{exercise}
+
+\BeginKnitrBlock{solution}
+\iffalse{} {Solution. } \fi{} Each value has a \(1/6\) chance of
+appearing. Therefore,
+
+\[
+\mathbb{E}[X] = \sum_{i=1}^6 \frac{1}{6}i = \frac{21}{6} = 3.5
+\]
+
+We include a numerical solution showing convergence:
+\EndKnitrBlock{solution}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{N  }\OperatorTok{=} \DecValTok{1000}\OperatorTok{;}\NormalTok{ plt.plot(np.cumsum(np.random.randint(}\DecValTok{1}\NormalTok{, }\DecValTok{7}\NormalTok{, size}\OperatorTok{=}\NormalTok{N)) }\OperatorTok{/}\NormalTok{ np.arange(}\DecValTok{1}\NormalTok{, N }\OperatorTok{+} \DecValTok{1}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{info-theory_files/figure-latex/unnamed-chunk-26-1}
+
 \BeginKnitrBlock{theorem}[Linearity of Expectation]
-\protect\hypertarget{thm:unnamed-chunk-23}{}{\label{thm:unnamed-chunk-23}
+\protect\hypertarget{thm:unnamed-chunk-27}{}{\label{thm:unnamed-chunk-27}
 \iffalse (Linearity of Expectation) \fi{} }\[
 \mathbb{E}\left[aX+bY\right] = a\mathbb{E}[X]+b\mathbb{E}[Y]
 \]
@@ -451,7 +519,7 @@ The \(n\)th moment about \(x_0\) is defined as
 \end{marginfigure}
 
 \BeginKnitrBlock{definition}[Variance]
-\protect\hypertarget{def:unnamed-chunk-25}{}{\label{def:unnamed-chunk-25}
+\protect\hypertarget{def:unnamed-chunk-29}{}{\label{def:unnamed-chunk-29}
 \iffalse (Variance) \fi{} } The variance is the 2nd moment about the
 mean.
 
@@ -466,14 +534,14 @@ Unfortunately, the definition given above in Equation
 algebra results in a computationally simpler alternative.
 
 \BeginKnitrBlock{lemma}[Determinism of Expectation of Expectation]
-\protect\hypertarget{lem:unnamed-chunk-26}{}{\label{lem:unnamed-chunk-26}
+\protect\hypertarget{lem:unnamed-chunk-30}{}{\label{lem:unnamed-chunk-30}
 \iffalse (Determinism of Expectation of Expectation) \fi{} }\[
 \mathbb{E}\Big[\mathbb{E}[X]\Big] = \mathbb{E}[X]
 \]
 \EndKnitrBlock{lemma}
 
 \BeginKnitrBlock{theorem}[Computationally Simpler Alternative for Variance]
-\protect\hypertarget{thm:unnamed-chunk-27}{}{\label{thm:unnamed-chunk-27}
+\protect\hypertarget{thm:unnamed-chunk-31}{}{\label{thm:unnamed-chunk-31}
 \iffalse (Computationally Simpler Alternative for Variance) \fi{} }
 
 \begin{equation}
@@ -505,6 +573,29 @@ As a result,
 \[\mathbb{E}[\mathbb{1}_A(\omega)] = \Pr(A)\]
 \[\mathrm{Var}[\mathbb{1}_A(\omega)] = P(A)(1-P(A))\]
 \end{marginfigure}
+
+\BeginKnitrBlock{lemma}
+\protect\hypertarget{lem:unnamed-chunk-34}{}{\label{lem:unnamed-chunk-34} }
+If \(X\) and \(Y\) are independent,
+
+\[
+\operatorname{Var}[X+Y] = \operatorname{Var}[X] + \operatorname{Var}[Y]
+\]
+\EndKnitrBlock{lemma}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}
+
+\begin{align*}
+\operatorname{Var}[X+Y] &= \mathbb{E}[(X+Y)^2] - \mathbb{E}[X+Y]^2 \\
+&= \mathbb{E}[X^2 + 2XY + Y^2] - \mathbb{E}[X+Y]^2 \\
+&= \mathbb{E}[X^2] + 2\mathbb{E}[XY] + \mathbb{E}[Y^2] - (\mathbb{E}[X+Y])^2 \\
+&= \mathbb{E}[X^2] + 2\mathbb{E}[X]\mathbb{E}[Y] + \mathbb{E}[Y^2] - \left( \mathbb{E}[X]^2 + 2\mathbb{E}[X]\mathbb{E}[Y] + \mathbb{E}[Y]^2 \right) \\
+&= \mathbb{E}[X^2] + 2\mathbb{E}[X]\mathbb{E}[Y] + \mathbb{E}[Y^2] - \mathbb{E}[X]^2 - 2\mathbb{E}[X]\mathbb{E}[Y] - \mathbb{E}[Y]^2 \\
+&= \mathbb{E}[X^2] - \mathbb{E}[X]^2 + \mathbb{E}[Y^2] - \mathbb{E}[Y]^2 \\
+&= \operatorname{Var}[X] + \operatorname{Var}[Y]
+\end{align*}
+\EndKnitrBlock{proof}
 
 \begin{longtable}[]{@{}lll@{}}
 \caption{Expectation and Variance of Common
@@ -603,7 +694,7 @@ Now that you're convinced that information can be modelled
 stochastically, we can consider what information means.
 
 \BeginKnitrBlock{example}[The Q-U Question]
-\protect\hypertarget{exm:unnamed-chunk-31}{}{\label{exm:unnamed-chunk-31}
+\protect\hypertarget{exm:unnamed-chunk-37}{}{\label{exm:unnamed-chunk-37}
 \iffalse (The Q-U Question) \fi{} } Consider a game where you predict
 the next letter of a piece of English text given all the previous
 letters. You are given the phrase \texttt{elephants\ are\ q}. You know
@@ -617,7 +708,7 @@ What we've captured in this example is a working conception of
 information.
 
 \BeginKnitrBlock{definition}[Information]
-\protect\hypertarget{def:unnamed-chunk-32}{}{\label{def:unnamed-chunk-32}
+\protect\hypertarget{def:unnamed-chunk-38}{}{\label{def:unnamed-chunk-38}
 \iffalse (Information) \fi{} } New information (which is really the only
 kind of information we care about) \textbf{is} the ``surprisal'' of an
 information source. The more surprised you are, the more information you
@@ -668,7 +759,7 @@ To each event, we now attach a surprisal value. To characterize a
 stochastic variable as a whole, we now define entropy.
 
 \BeginKnitrBlock{definition}[Entropy]
-\protect\hypertarget{def:unnamed-chunk-35}{}{\label{def:unnamed-chunk-35}
+\protect\hypertarget{def:unnamed-chunk-41}{}{\label{def:unnamed-chunk-41}
 \iffalse (Entropy) \fi{} } The entropy \(H\) of a stochastic variable
 \(X\) is the expectation of surprisal of \(X\).
 
@@ -719,7 +810,7 @@ Plotting for every possible value for \(p\), we yield a nice graph:
 \EndKnitrBlock{solution}
 
 \begin{figure}
-\includegraphics{_main_files/figure-latex/unnamed-chunk-38-1} \caption[Bernoulli Entropy]{Bernoulli Entropy}\label{fig:unnamed-chunk-38}
+\includegraphics{info-theory_files/figure-latex/unnamed-chunk-44-1} \caption[Bernoulli Entropy]{Bernoulli Entropy}\label{fig:unnamed-chunk-44}
 \end{figure}
 
 When \(p\) is 0 or 1, we need 0 bits of information, which makes sense
@@ -772,7 +863,7 @@ H(x) &= \sum_x p(x)\log(1/p(x)) \\
 \EndKnitrBlock{solution}
 
 \BeginKnitrBlock{exercise}[Double the Possibilities]
-\protect\hypertarget{exr:unnamed-chunk-41}{}{\label{exr:unnamed-chunk-41}
+\protect\hypertarget{exr:unnamed-chunk-47}{}{\label{exr:unnamed-chunk-47}
 \iffalse (Double the Possibilities) \fi{} } Repeat Exercise
 \ref{exr:fair-dice-roll} except that there are double the number of
 possible values (i.e.~a 12-sided die).
@@ -788,7 +879,7 @@ consider \(\log(12)\), which by log properties is
 \section{Jensen's Inequality}\label{jensens-inequality}
 
 \BeginKnitrBlock{definition}[Convex Function]
-\protect\hypertarget{def:unnamed-chunk-43}{}{\label{def:unnamed-chunk-43}
+\protect\hypertarget{def:unnamed-chunk-49}{}{\label{def:unnamed-chunk-49}
 \iffalse (Convex Function) \fi{} } A function \(f(x)\) is
 \textbf{convex} on the interval \((a,b)\) if it is concave up on that
 interval (i.e.~second derivative is positive).
@@ -803,7 +894,7 @@ f(\lambda x_1 + (1-\lambda)x_2) \leq \lambda f(x_1) + (1-\lambda) f(x_2)
 \]
 
 \BeginKnitrBlock{theorem}[Jensen's Inequality]
-\protect\hypertarget{thm:unnamed-chunk-44}{}{\label{thm:unnamed-chunk-44}
+\protect\hypertarget{thm:unnamed-chunk-50}{}{\label{thm:unnamed-chunk-50}
 \iffalse (Jensen's Inequality) \fi{} }For a stochastic variable \(X\)
 and a convex function \(f\),
 
@@ -833,14 +924,14 @@ maximizes entropy. We now see that the intuition from Exercise
 \section{Joint \& Conditional Entropy}\label{joint-conditional-entropy}
 
 \BeginKnitrBlock{definition}[Joint Entropy]
-\protect\hypertarget{def:unnamed-chunk-45}{}{\label{def:unnamed-chunk-45}
+\protect\hypertarget{def:unnamed-chunk-51}{}{\label{def:unnamed-chunk-51}
 \iffalse (Joint Entropy) \fi{} }\[
 H(X,Y) \equiv -\sum_{x}\sum_{y} \Pr(x,y)\log(\Pr(x,y))
 \]
 \EndKnitrBlock{definition}
 
 \BeginKnitrBlock{definition}[Conditional Entropy]
-\protect\hypertarget{def:unnamed-chunk-46}{}{\label{def:unnamed-chunk-46}
+\protect\hypertarget{def:unnamed-chunk-52}{}{\label{def:unnamed-chunk-52}
 \iffalse (Conditional Entropy) \fi{} }\[
 H(Y | X) \equiv \sum_x \Pr(X = x) H(Y | X = x)
 \]
@@ -874,7 +965,7 @@ Equation \eqref{eq:general-discrete-entropy} generates \(H(X)\),
 \(H(X,Y)\) and \(H(X|Y)\).
 
 \BeginKnitrBlock{theorem}
-\protect\hypertarget{thm:unnamed-chunk-47}{}{\label{thm:unnamed-chunk-47} }
+\protect\hypertarget{thm:unnamed-chunk-53}{}{\label{thm:unnamed-chunk-53} }
 Let \(X\) be a stochastic variable and \(g\) a function of \(X\). Then,
 
 \[
@@ -926,7 +1017,7 @@ Interestingly, we can use conditional entropy to define a
 \textbf{metric}.
 
 \BeginKnitrBlock{definition}[Metric]
-\protect\hypertarget{def:unnamed-chunk-49}{}{\label{def:unnamed-chunk-49}
+\protect\hypertarget{def:unnamed-chunk-55}{}{\label{def:unnamed-chunk-55}
 \iffalse (Metric) \fi{} } A metric on a set \(X\) is a function
 \(d: X \times X \to [0, \infty]\) that defines distance with the
 following constraints:
@@ -986,7 +1077,7 @@ In any case, we drop this problematic term and label it differential
 entropy.
 
 \BeginKnitrBlock{definition}[Differential Entropy]
-\protect\hypertarget{def:unnamed-chunk-51}{}{\label{def:unnamed-chunk-51}
+\protect\hypertarget{def:unnamed-chunk-57}{}{\label{def:unnamed-chunk-57}
 \iffalse (Differential Entropy) \fi{} }The differential entropy \(h\) of
 a continuous stochastic variable \(X\) is
 
@@ -1006,7 +1097,7 @@ to represent all real numbers, it would take an infinite amount of
 information.
 
 \BeginKnitrBlock{exercise}[Entropy of Uniform]
-\protect\hypertarget{exr:unnamed-chunk-52}{}{\label{exr:unnamed-chunk-52}
+\protect\hypertarget{exr:unnamed-chunk-58}{}{\label{exr:unnamed-chunk-58}
 \iffalse (Entropy of Uniform) \fi{} } Find \(h(X)\) for \(X\) a uniform
 distribution.
 \EndKnitrBlock{exercise}
@@ -1024,7 +1115,7 @@ Notice that if \(a=0\) and \(b \leq 1\), we have 0 and negative values
 of entropy, so differential entropy really isn't like discrete entropy.
 
 \BeginKnitrBlock{exercise}[Entropy of Exponential]
-\protect\hypertarget{exr:unnamed-chunk-54}{}{\label{exr:unnamed-chunk-54}
+\protect\hypertarget{exr:unnamed-chunk-60}{}{\label{exr:unnamed-chunk-60}
 \iffalse (Entropy of Exponential) \fi{} } Find \(h(X)\) for \(X\) an
 exponential distribution.
 \EndKnitrBlock{exercise}
@@ -1048,7 +1139,7 @@ h(X) = - \log \lambda + \lambda \frac{1}{\lambda} \log e = \log(e/\lambda)
 \EndKnitrBlock{solution}
 
 \BeginKnitrBlock{exercise}[Entropy of Gaussian]
-\protect\hypertarget{exr:unnamed-chunk-56}{}{\label{exr:unnamed-chunk-56}
+\protect\hypertarget{exr:unnamed-chunk-62}{}{\label{exr:unnamed-chunk-62}
 \iffalse (Entropy of Gaussian) \fi{} } Find \(h(X)\) for \(X\) a
 Gaussian distribution.
 \EndKnitrBlock{exercise}
@@ -1154,9 +1245,9 @@ messages without ambiguity.
 
 \section{Huffman Coding}\label{huffman-coding}
 
-The solution devised by David Huffman has optimality given certain
-conditions. First, we'll need to describe the algorithm of Huffman
-coding.
+In 1952, David Huffman, a student at MIT, developed an algorithm for
+efficiently encoding symbols without any loss of information. The
+algorithm follows:
 
 \begin{marginfigure}
 \textbf{Notation}. Let \(\Sigma\) denote an alphabet of symbols to be
@@ -1190,7 +1281,7 @@ An intuitive video explaining Huffman coding can be found here:
 available here: \url{https://github.com/ashwinreddy/huffman} .
 
 \BeginKnitrBlock{example}
-\protect\hypertarget{exm:unnamed-chunk-60}{}{\label{exm:unnamed-chunk-60} }
+\protect\hypertarget{exm:unnamed-chunk-66}{}{\label{exm:unnamed-chunk-66} }
 Let \(X \in \Sigma\) where \(\Sigma = \{1,2,3,4,5\}\) with probabilities
 .25, .25, .2, .15, .15, respectively.
 
@@ -1219,8 +1310,17 @@ Let \(X \in \Sigma\) where \(\Sigma = \{1,2,3,4,5\}\) with probabilities
 \caption{Huffman Tree with 2 branches}
 \end{figure}
 
-We compute \(\mathbb{E}[L(X)]\) as 2.3 and \(H(X)\approx 2.28\). Huffman
-coding is within the band of optimality.
+The expected word length is between 2 and 3 since each node is either at
+the second or third level. 30\% of the time, we expect to see a 4 or a
+5, which will require 3 bits. The other 70\% of the time, we expect to
+use two bits.
+
+\[
+\mathbb{E}[L(X)] = 0.3\cdot 3 + 0.7 \cdot 2 = 2.3
+\]
+
+Also, \(H(X)\approx 2.28\). Huffman coding is within the band of
+optimality.
 
 \begin{figure}
 \Tree[. 1 2 [. 3 4 5 ] ]
@@ -1230,6 +1330,15 @@ coding is within the band of optimality.
 The expected word length is 1.5 bits. We adjust \(H(X)\) using
 \(\log_3\) accordingly to find \(H(X)\approx 1.3\).
 \EndKnitrBlock{solution}
+
+To remain efficient, one must insert an appropriate number of dummy
+symbols into the list with weights 0. Add enough symbols so that the
+total number of symbols can be written as \(1+k(D-1)\) where \(D\) is
+the base being used for the smallest possible \(k \in \mathbb{N}\).
+
+In the special case that \(D=2\), the formula simplifies to \(1+k\). In
+other words, in base 2, dummy symbols do not need to be added if there
+is already at least one symbol.
 
 \section{Lagrange Multipliers}\label{lagrange-multipliers}
 
@@ -1266,7 +1375,7 @@ Alternatively, we can construct a function
 solutions to \(\vec\nabla \mathcal{L} = \vec{0}\).
 
 \BeginKnitrBlock{example}
-\protect\hypertarget{exm:unnamed-chunk-62}{}{\label{exm:unnamed-chunk-62} }
+\protect\hypertarget{exm:unnamed-chunk-68}{}{\label{exm:unnamed-chunk-68} }
 Find extrema of \(f(x,y) = x^2 - \ln x\) subject to \(8x - 3y = 0\).
 \EndKnitrBlock{example}
 
@@ -1423,7 +1532,7 @@ The 1 bit is split over the block
 Huffman produces an optimal code but does not have to be the only way.
 
 \BeginKnitrBlock{lemma}
-\protect\hypertarget{lem:unnamed-chunk-67}{}{\label{lem:unnamed-chunk-67} }
+\protect\hypertarget{lem:unnamed-chunk-73}{}{\label{lem:unnamed-chunk-73} }
 For any distribution, there exists an instantaneous, optimal code
 minimizing the expected length that satisfies
 
@@ -1517,9 +1626,263 @@ Use induction to show this is true for all levels of the tree.
 \EndKnitrBlock{proof}
 
 \BeginKnitrBlock{theorem}[Huffman Optimality]
-\protect\hypertarget{thm:unnamed-chunk-69}{}{\label{thm:unnamed-chunk-69}
+\protect\hypertarget{thm:unnamed-chunk-75}{}{\label{thm:unnamed-chunk-75}
 \iffalse (Huffman Optimality) \fi{} } Huffman coding is optimal.
 \EndKnitrBlock{theorem}
+
+\chapter{Channel Coding}\label{channel-coding}
+
+\section{Conditional Probability}\label{conditional-probability}
+
+Given the joint probability function \(p(X=x,Y=y)\) and a function
+\(Z=g(X,Y)\) for random variables \(X\) and \(Y\), can we find the
+probability function for \(Z\)?
+
+\BeginKnitrBlock{definition}[Cumulative Distribution Function]
+\protect\hypertarget{def:unnamed-chunk-76}{}{\label{def:unnamed-chunk-76}
+\iffalse (Cumulative Distribution Function) \fi{} } \[
+F_X(x) \equiv \Pr(X \leq x)
+\]
+\EndKnitrBlock{definition}
+
+Mathematically, \[
+F_X(x) = \int\limits_{-\infty}^x f_X(u) \dif u
+\]
+
+Therefore,
+
+\[
+f_X(x) = \od{F_X(x)}{x}
+\]
+
+So if we can find \(F_X(x)\), we can get \(f_X(x)\) pretty easily. Let
+\(D\) be a region in the \(XY\) plane where \(g(x,y) \leq z\) is
+satisfied. Then,
+
+\[
+F_Z(z) = \int_{D} f(x,y) \dif A \implies f_Z(z) = \od{}{z} \int_{D} f(x,y) \dif A
+\]
+
+\BeginKnitrBlock{example}
+\protect\hypertarget{exm:unnamed-chunk-77}{}{\label{exm:unnamed-chunk-77}
+}Find the probability function for \(Z=X+Y\).
+\EndKnitrBlock{example}
+
+\BeginKnitrBlock{solution}
+\iffalse{} {Solution. } \fi{}
+
+\begin{align*}
+f_Z(z) &= \od{}{z} \int_\RR\int_{-\infty}^{z-x} f(x,y) \dif y \dif x \\
+&= \int_\RR \left[ \pd{}{z}\int_{-\infty}^{z-x} f(x,y) \dif y \right] \dif x \\
+&= \int_\RR f(x, z - x) \dif x \\
+\end{align*}
+
+If we further assume \(X\) and \(Y\) are independent, then
+
+\[
+f_Z(z) = \int_\RR f_X(x)f_Y(z-x) \dif x = (f_Y * f_X)(z) = (f_X * f_Y)(z)
+\]
+\EndKnitrBlock{solution}
+
+\section{Relative Entropy \& Mututal
+Information}\label{relative-entropy-mututal-information}
+
+\BeginKnitrBlock{definition}[Relative Entropy / Kullback-Leibler Divergence]
+\protect\hypertarget{def:unnamed-chunk-79}{}{\label{def:unnamed-chunk-79}
+\iffalse (Relative Entropy / Kullback-Leibler Divergence) \fi{} } \[
+D_{KL}(P \parallel Q) \equiv \sum_x p(x) \log \frac{p(x)}{q(x)} = \mathbb{E}_p \left[ \log \frac{p(x)}{q(x)} \right]
+\]
+\EndKnitrBlock{definition}
+
+The KL divergence is the minimum possible inefficiency of using
+
+\BeginKnitrBlock{example}
+\protect\hypertarget{exm:unnamed-chunk-80}{}{\label{exm:unnamed-chunk-80}
+}Let \(X\) be \(\operatorname{Bern}(r)\) and \(Y\) be
+\(\operatorname{Bern}(s)\). Find \(D_{KL}(X \parallel Y)\)
+\EndKnitrBlock{example}
+
+\BeginKnitrBlock{solution}
+\iffalse{} {Solution. } \fi{}\[
+D(X \parallel Y) = (1-r)\log \frac{1-r}{1-s} + r\log \frac{r}{s}
+\]
+\EndKnitrBlock{solution}
+
+\includegraphics{info-theory_files/figure-latex/unnamed-chunk-82-1}
+
+\BeginKnitrBlock{definition}[Mutual Information]
+\protect\hypertarget{def:unnamed-chunk-83}{}{\label{def:unnamed-chunk-83}
+\iffalse (Mutual Information) \fi{} }\[
+I(X; Y) \equiv D_{KL}(p(x,y) \parallel p(x)p(y))
+\]
+\EndKnitrBlock{definition}
+
+\BeginKnitrBlock{lemma}
+\protect\hypertarget{lem:unnamed-chunk-84}{}{\label{lem:unnamed-chunk-84} }
+
+\begin{align*}
+I(X; Y) &= H(X) - H(X|Y) \\
+&= H(Y) - H(Y|X) \\
+&= H(X)+H(Y) - H(X,Y)
+\end{align*}
+\EndKnitrBlock{lemma}
+
+\BeginKnitrBlock{example}
+\protect\hypertarget{exm:unnamed-chunk-85}{}{\label{exm:unnamed-chunk-85} }
+Find \(I(X; Y)\) for the table below.
+\EndKnitrBlock{example}
+
+\begin{longtable}[]{@{}lllll@{}}
+\caption{Joint Entropy for \(X\) (columns) and \(Y\)
+(rows)}\tabularnewline
+\toprule
+& 1 & 2 & 3 & 4\tabularnewline
+\midrule
+\endfirsthead
+\toprule
+& 1 & 2 & 3 & 4\tabularnewline
+\midrule
+\endhead
+1 & 1/8 & 1/16 & 1/32 & 1/32\tabularnewline
+2 & 1/16 & 1/8 & 1/32 & 1/32\tabularnewline
+3 & 1/16 & 1/16 & 1/16 & 1/16\tabularnewline
+4 & 1/4 & 0 & 0 & 0\tabularnewline
+\bottomrule
+\end{longtable}
+
+\BeginKnitrBlock{solution}
+\iffalse{} {Solution. } \fi{}\[
+H(X) = \sum p(x) \log \frac{1}{p(x)} = 14/8
+\]
+
+\[
+H(X|Y) = 11/8
+\]
+
+Then, \(I(X;Y)=3/8\)
+\EndKnitrBlock{solution}
+
+\BeginKnitrBlock{theorem}[Chain Rule for Entropy]
+\protect\hypertarget{thm:unnamed-chunk-87}{}{\label{thm:unnamed-chunk-87}
+\iffalse (Chain Rule for Entropy) \fi{} } Let \(X_1, \dots, X_n\) be
+drawn according to \(p(x_1, \dots, x_n)\). Then,
+
+\[
+H(X_1, \dots, X_n) = \sum_{i=1}^n H(X_i | X_{i-1}, \dots, X_1)
+\]
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}First, recall that
+
+\[
+H(X_1, X_2) = H(X_1) + H(X_2 | X_1)
+\]
+
+\[
+H(X_1, X_2, X_3) = H(X_1) + H(X_2, X_3 | X_1)
+\]
+\EndKnitrBlock{proof}
+
+\BeginKnitrBlock{theorem}[Information Inequality]
+\protect\hypertarget{thm:unnamed-chunk-89}{}{\label{thm:unnamed-chunk-89}
+\iffalse (Information Inequality) \fi{} } \[
+D(p \parallel q) \geq 0
+\]
+\EndKnitrBlock{theorem}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}
+
+\begin{align*}
+-D_{KL}(p \parallel q) &= - \sum p(x) \log \frac{p(x)}{q(x)} \\
+&= \sum p(x) \log \frac{q(x)}{p(x)} \\
+&\leq \log \sum p(x) \frac{q(x)}{p(x)} \\
+&= \log \sum q(x) \\
+&= \log 1 \\
+&= 0
+\end{align*}
+
+\[
+-D_{KL}(p \parallel q) \leq 0 \implies D_{KL}(p \parallel q) \geq 0
+\]
+\EndKnitrBlock{proof}
+
+\BeginKnitrBlock{corollary}
+\protect\hypertarget{cor:unnamed-chunk-91}{}{\label{cor:unnamed-chunk-91}
+}\[
+  I(X; Y) \geq 0
+\]
+\EndKnitrBlock{corollary}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-92}{}{\label{exr:unnamed-chunk-92} }
+Show that \(H(X) \leq \log \lvert \mathscr{H}\rvert\).
+\(\lvert \mathscr{H} \rvert\) denotes the number of elements in the
+range of \(X\) of equality iff X has a uniform distribution.
+\EndKnitrBlock{exercise}
+
+\BeginKnitrBlock{proof}
+\iffalse{} {Proof. } \fi{}
+
+\begin{align*}
+D_{KL}(p \parallel \mathscr{U}) &= \mathbb{E}_p \left[\log\frac{p(x)}{q(x)}\right] \\
+&= \mathbb{E}_p \left[ \log \left(\lvert\mathscr{H}\rvert p(x)\right)  \right] \\
+&= \sum p(x) \log \left(\lvert\mathscr{H}\rvert p(x)\right) \\
+&= \sum p(x) \left( \log \lvert \mathscr{H} \rvert + \log p(x)  \right) \\
+&= \sum p(x) \log \lvert \mathscr{H} \rvert + \sum p(x) \log p(x) \\
+&= \log \lvert \mathscr{H} \rvert - H(X)
+\end{align*}
+\EndKnitrBlock{proof}
+
+\BeginKnitrBlock{lemma}
+\protect\hypertarget{lem:unnamed-chunk-94}{}{\label{lem:unnamed-chunk-94} }
+The following statement holds with equality iff \(X\) and \(Y\) are
+independent.
+
+\[
+H(X|Y) \leq H(X)
+\]
+\EndKnitrBlock{lemma}
+
+\begin{marginfigure}
+\emph{Intuition}. Knowing another R.V. value cannot, on average,
+increase the surprisal of a R.V.
+\end{marginfigure}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-96}{}{\label{exr:unnamed-chunk-96}
+}Do something with the table below.
+\EndKnitrBlock{exercise}
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule
+X & 1 & 2\tabularnewline
+\midrule
+\endhead
+Y & &\tabularnewline
+1 & 0 & 3/4\tabularnewline
+2 & 1/8 & 1/8\tabularnewline
+\bottomrule
+\end{longtable}
+
+\BeginKnitrBlock{solution}
+\iffalse{} {Solution. } \fi{} \[
+H(X) = \sum p(x) \log \frac{1}{p(x)} = \frac{1}{8} \log 8 + \frac{7}{8}\log \frac{8}{7} \approx .544
+\]
+
+\[
+H(X | Y = 1) = \frac{3}{4}\log \frac{4}{3} \approx .311
+\]
+
+\[
+H(X | Y = 2) = 1
+\]
+
+\[
+H(X|Y) \approx 0.483
+\]
+\EndKnitrBlock{solution}
 
 \part*{Appendix}\label{part-appendix}
 \addcontentsline{toc}{part}{Appendix}
@@ -1538,7 +1901,7 @@ probability \(p\) that the coin lands heads. Therefore, the probability
 that the coin lands tails is \(1-p\).
 
 \BeginKnitrBlock{definition}[Bernoulli Distribution]
-\protect\hypertarget{def:unnamed-chunk-70}{}{\label{def:unnamed-chunk-70}
+\protect\hypertarget{def:unnamed-chunk-98}{}{\label{def:unnamed-chunk-98}
 \iffalse (Bernoulli Distribution) \fi{} }
 
 \begin{equation}
@@ -1562,7 +1925,7 @@ Additionally, the one heads could come up at any point in the sequence,
 which introduces a factor of \(\binom{N}{k}\).
 
 \BeginKnitrBlock{definition}[Binomial Distribution]
-\protect\hypertarget{def:unnamed-chunk-71}{}{\label{def:unnamed-chunk-71}
+\protect\hypertarget{def:unnamed-chunk-99}{}{\label{def:unnamed-chunk-99}
 \iffalse (Binomial Distribution) \fi{} }
 
 \begin{equation}
@@ -1578,7 +1941,7 @@ In a geometric distribution, we keep tossing the coin until there is one
 heads.
 
 \BeginKnitrBlock{definition}[Geometric Distribution]
-\protect\hypertarget{def:unnamed-chunk-72}{}{\label{def:unnamed-chunk-72}
+\protect\hypertarget{def:unnamed-chunk-100}{}{\label{def:unnamed-chunk-100}
 \iffalse (Geometric Distribution) \fi{} }
 
 \begin{equation}
@@ -1589,7 +1952,7 @@ p_X(x) = (1-p)^{x-1}p
 \section{Poisson Distribution}\label{poisson-distribution}
 
 \BeginKnitrBlock{definition}[Poisson Distribution]
-\protect\hypertarget{def:unnamed-chunk-73}{}{\label{def:unnamed-chunk-73}
+\protect\hypertarget{def:unnamed-chunk-101}{}{\label{def:unnamed-chunk-101}
 \iffalse (Poisson Distribution) \fi{} } \[
 p_X(x = k) = \frac{\lambda^k}{k!}e^{-\lambda}.
 \]
@@ -1634,7 +1997,7 @@ Stochastic Variables}\label{continuous-stochastic-variables}}
 \section{Uniform}\label{uniform}
 
 \BeginKnitrBlock{definition}[Uniform Stochastic Variable]
-\protect\hypertarget{def:unnamed-chunk-76}{}{\label{def:unnamed-chunk-76}
+\protect\hypertarget{def:unnamed-chunk-104}{}{\label{def:unnamed-chunk-104}
 \iffalse (Uniform Stochastic Variable) \fi{} }For the interval
 \([a,b]\), the uniform stochastic variable assigns all \(x\) in the
 interval the same probability, so that
@@ -1645,7 +2008,7 @@ f_X(x) = \frac{1}{b-a}
 \EndKnitrBlock{definition}
 
 \begin{figure}
-\includegraphics{_main_files/figure-latex/unnamed-chunk-77-1} \caption[A Uniform Distribution is Constant]{A Uniform Distribution is Constant}\label{fig:unnamed-chunk-77}
+\includegraphics{info-theory_files/figure-latex/unnamed-chunk-105-1} \caption[A Uniform Distribution is Constant]{A Uniform Distribution is Constant}\label{fig:unnamed-chunk-105}
 \end{figure}
 
 Intuitively, the expectation for the uniform stochastic variable on the
@@ -1678,7 +2041,7 @@ The variance may also be computed using the formula in Equation
 \section{Exponential}\label{exponential}
 
 \BeginKnitrBlock{definition}[Exponential Stochastic Variable]
-\protect\hypertarget{def:unnamed-chunk-79}{}{\label{def:unnamed-chunk-79}
+\protect\hypertarget{def:unnamed-chunk-107}{}{\label{def:unnamed-chunk-107}
 \iffalse (Exponential Stochastic Variable) \fi{} }\[
 f_X(x) = \begin{cases}
 \lambda e^{-\lambda x} & x \geq 0 \\
@@ -1712,7 +2075,7 @@ Finally, multiply the \(\lambda\) from the original expression to obtain
 \EndKnitrBlock{proof}
 
 \BeginKnitrBlock{definition}[Memoryless Property]
-\protect\hypertarget{def:unnamed-chunk-81}{}{\label{def:unnamed-chunk-81}
+\protect\hypertarget{def:unnamed-chunk-109}{}{\label{def:unnamed-chunk-109}
 \iffalse (Memoryless Property) \fi{} }A stochastic variable is
 memoryless iff \[
 p(x>s+t\, |\, x > t) = p (x>s) \qquad s,t\geq 0
@@ -1730,7 +2093,7 @@ about a ``bell curve.'' The base function is \(\exp(-x^2/2)\), whose
 graph is given in Figure \ref{fig:gaussian}.
 
 \begin{figure}
-\includegraphics{_main_files/figure-latex/gaussian-1} \caption[Simple Gaussian]{Simple Gaussian}\label{fig:gaussian}
+\includegraphics{info-theory_files/figure-latex/gaussian-1} \caption[Simple Gaussian]{Simple Gaussian}\label{fig:gaussian}
 \end{figure}
 
 This function is known as the \textbf{standard normal}. However, we have

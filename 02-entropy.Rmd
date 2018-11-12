@@ -30,32 +30,6 @@ New information (which is really the only kind of information we care about) **i
 
 ```
 
-We now need a way of quantifying surprisal/information. The core of our theory is that surprisal should be inversely correlated with the probability of occurence. So naturally, we gravitate towards picking something like $1/p$ as our information function. Consider the limit cases, however, of literally using $1/p$. When $p=0$, we have infinite surprisal, and when $p=1$, we have 1 unit of surprisal. If something is guaranteed to happen, 1 unit is an odd baseline to use. As a result, we pick $\log(1/p)$, which is more attractive for a few reasons.
-
-1. Continuity
-2. Monotonically decreasing in $p$
-3. Never negative
-4. With $p=1$, information becomes 0
-5. Information due to independent events is additive
-
-```{marginfigure}
-Which base we pick is entirely arbitrary as long as it makes sense (sensible options include 2, 10, and $e$). The value of entropy changes predictably with a change of base, so it really doesn't pose much of a problem. In most cases, we will pick base 2, since we like to consider binary digits (abbreviated bits).
-```
-
-To each event, we now attach a surprisal value. To characterize a stochastic variable as a whole, we now define entropy.
-
-```{definition, name = "Entropy"}
-
-The entropy $H$ of a stochastiv variable $X$ is the expectation of surprisal of $X$. 
-
-\begin{align*}
-H(X) &\equiv \mathbb{E}\left[\log \frac{1}{\mathbb{P}(X=x)}\right]\\
-&= \sum_i p_i \log(1/p_i) \\
-&= -\sum_i p_i \log p_i
-\end{align*}
-  
-```
-
 ```{marginfigure}
 
 Shannon's formula for entropy actually has a similarity to thermodynamic entropy:
@@ -65,28 +39,99 @@ S = - k_B \sum p_i \ln p_i
 $$
 
 ```
+We now need a way of quantifying surprisal/information. The core of our theory is that surprisal should be inversely correlated with the probability of occurence. So naturally, we gravitate towards picking something like $1/p$ as our information function. Consider the limit cases, however, of literally using $1/p$. When $p=0$, we have infinite surprisal, and when $p=1$, we have 1 unit of surprisal. If something is guaranteed to happen, 1 unit is an odd baseline to use. As a result, we pick $\log(1/p)$, which is more attractive for a few reasons.
 
-```{example, name = "Entropy of Bernoulli Distribution"}
+1. Continuity
+2. Monotonically decreasing in $p$
+3. Never negative
+4. With $p=1$, information becomes 0
+5. Information due to independent events is additive
+
+```{marginfigure}
+Typically, we will pick a base of $2$ although any other sensible base works. We will usually omit the subscript/base unless it needs to be made explicit.
+```
+
+To each event, we now attach a surprisal value. To characterize a stochastic variable as a whole, we now define entropy.
+
+```{definition, name = "Entropy"}
+
+The entropy $H$ of a stochastic variable $X$ is the expectation of surprisal of $X$. 
+
+\begin{align*}
+H(X) &\equiv \mathbb{E}\left[\log \frac{1}{\Pr(X=x)}\right]\\
+&= \sum_i p_i \log(1/p_i) \\
+&= -\sum_i p_i \log p_i
+\end{align*}
+  
+```
+
+```{lemma, nonnegative-entropy, name = "Entropy is Nonnegative"}
+$$
+\forall X, H(X) \geq 0
+$$
+```
+
+
+```{proof}
+
+\begin{gather*}
+H(X) \geq 0 \\
+-\sum_{x \in \Omega} \Pr(X=x)\log\Pr(X=x) \geq 0 \\
+\sum_{x \in \Omega} \Pr(X=x)\log\Pr(X=x) \leq 0 \\
+\end{gather*}
+
+Note that $$\forall x \in \Omega, 0\leq \Pr(X=x) \leq 1 \implies \forall x \in \Omega, \log\Pr(X=x) \leq 0.$$ Since a weighted sum of negative numbers with nonegative numbers can never be positive, entropy can never be negative.
+
+```
+
+
+```{exercise, bern-entropy, name = "Entropy of Bernoulli Distribution"}
+
+Find the entropy of a general Bernoulli distribution and plot the entropy against the probability of heads.
+
+```
+
+```{solution}
+
+
 $$
 H(X) = p \log \frac{1}{p} + (1-p)\log \frac{1}{1-p}
 $$
-```
 
 Plotting for every possible value for $p$, we yield a nice graph:
 
-```{r, fig.cap = "Bernoulli Entropy", echo = FALSE}
-curve(x * log(1/x) + (1-x)*log(1/(1-x)), from=0,to=1,col="blue", ylab="Entropy", xlab="Probability")
+```{python, fig.cap = "Bernoulli Entropy", echo = FALSE}
+
+fig, ax = plt.subplots(figsize=(8,5))
+
+log2 = lambda x: np.log( x ) / np.log( 2 )
+
+p = np.linspace( 0 , 1 )[ 1 : - 1 ]
+H = p * log2( 1 / p ) 
+H += ( 1 - p ) * log2( 1 / ( 1 - p ) )
+
+ax.set_xlabel("Probability of Heads")
+plt.plot(p, H)
+plt.ylabel("Entropy (Bits)")
+plt.title("Number of Bits for Bernoulli Distributions")
+plt.show()
+
 ```
+
 
 When $p$ is 0 or 1, we need 0 bits of information, which makes sense because the result was guaranteed. As we go more towards complete randomness (which colloquially, we might also call "entropy" from a physics standpoint), we need more bits to represent the possibilites (a maximum of 1 in this case).
 
+```{remark}
+
 But what does it mean to have 0.47 bits, which we might have if $p(\text{heads})=0.9$? Imagine that we had a 100-long sequence of coin flips and we transmitted the information. For the purely random case (i.e. using a fair coin), we would need 100 bits. However, for this extremely unfair case, we could get away with 47 bits without losing any information (on average).
+
+```
 
 ## Bit Representations
 
 While we will be overloading the word bit in different contexts in this book, it is useful to understand what it represents. As noted before, bit is an abbreviation of "binary digit." When we talk about a bit in computer science, we typically mean 0 or 1, low voltage or high voltage, etc. Here, we take a bit to mean something like the answer to a single yes or no question with yes and no equally likely. In other words, a coin toss. That is, one bit captures the information of a Bernoulli distribution with $p=0.5$. From there, we can meaningfully interpret values of entropy as telling us roughly how many of these yes/no questions or coin flips or sequence of binary digits are needed to transmit the information on average.
 
-```{example, fair-dice-roll, name = "Entropy of a Fair Dice Roll"}
+```{exercise, fair-dice-roll, name = "Entropy of a Fair Dice Roll"}
 
 Find the entropy of a fair dice roll.
 
@@ -109,7 +154,7 @@ H(x) &= \sum_x p(x)\log(1/p(x)) \\
 
 ```{exercise, name = "Double the Possibilities"}
 
-Repeat Example \@ref(exm:fair-dice-roll) except that there are double the number of possible values (i.e. a 12-sided die).
+Repeat Exercise \@ref(exr:fair-dice-roll) except that there are double the number of possible values (i.e. a 12-sided die).
 
 ```
 
@@ -123,23 +168,27 @@ Intuitively, we just need to add one more bit to flip between the first 6 and la
 
 ```{definition, name = "Convex Function"}
 
-A function $f(x)$ is convex on the interval $(a,b)$ if it is concave up on that interval (i.e. second derivative is positive). Alternatively, it obeys the property that for all $(x_1, x_2)$ within the interval $(a,b)$ and for all $\lambda$ normalized between 0 and 1,
+A function $f(x)$ is **convex** on the interval $(a,b)$ if it is concave up on that interval (i.e. second derivative is positive).
+
+```
+
+ Alternatively, it obeys the property that for all $(x_1, x_2)$ within the interval $(a,b)$ and for all $\lambda$ normalized between 0 and 1,
 
 $$
 f(\lambda x_1 + (1-\lambda)x_2) \leq \lambda f(x_1) + (1-\lambda) f(x_2)
 $$
 
-```
-
 ```{theorem, name = "Jensen's Inequality"}
-For a stochastic variable $X$ and a function $f$,
+For a stochastic variable $X$ and a convex function $f$,
 
 $$
 \mathbb{E}[f(X)] \geq f(\mathbb{E}[X])
 $$
 ```
 
-```{theorem}
+Intuitively, if we think of expected value as an average, it makes sense that the average value of a convex function would never exceed the function's value at its average (i.e. its midpoint). 
+
+```{theorem, max-entropy}
 If $X$ assumes real values $\{x_1, \dots, x_n\}$ and $0 \leq H(X) \leq \log r$. Then, 
 
 $$
@@ -148,58 +197,221 @@ $$
   
 ```
 
-## Joint Entropy
+Theorem \@ref(thm:max-entropy) tells us that an equiprobable distribution maximizes entropy. We now see that the intuition from Exercise \@ref(exr:bern-entropy) can be generalized.
+
+## Joint & Conditional Entropy
 
 ```{definition, name = "Joint Entropy"}
 $$
-H(X,Y) = -\sum_{x}\sum_{y} \mathbb{P}(x,y)\log(p(x,y))
+H(X,Y) \equiv -\sum_{x}\sum_{y} \Pr(x,y)\log(\Pr(x,y))
 $$
 ```
 
 ```{definition, name = "Conditional Entropy"}
 $$
-H(Y | X) = \sum_x p(x) H(Y | X = x)
+H(Y | X) \equiv \sum_x \Pr(X = x) H(Y | X = x)
 $$
 ```
 
+```{theorem, joint-conditional}
+\begin{equation}
+H(X,Y) = H(X) + H(Y  | X) = H(Y) + H(X | Y)
+(\#eq:joint-conditional)
+\end{equation}
+```
+
+Intuitively, we can think of Equation \@ref(eq:joint-conditional) as saying that a complete characterization of correlated variables $X$ and $Y$ can be described using as many bits needed to fully describe $X$ and then however many additional bits it takes to describe $Y$ given $X$ (and vice versa).
+
+Given that we have different kinds of entropy, it is helpful to write down one equation that makes the definitions easier to digest:
+
+\begin{equation}
+H(\cdot) = \mathbb{E}\left[\log\frac{1}{\Pr(\cdot)}\right]
+(\#eq:general-discrete-entropy)
+\end{equation}
+
+Equation \@ref(eq:general-discrete-entropy) generates $H(X)$, $H(X,Y)$ and $H(X|Y)$. 
+
 ```{theorem}
-\begin{align*}
-H(X,Y) &= H(X) + H(Y  | X) \\
-&= H(Y) + H(X | Y)
-\end{align*}
+
+Let $X$ be a stochastic variable and $g$ a function of $X$. Then,
+
+$$
+H(g(X)) \leq H(X)
+$$
+
 ```
 
 ```{proof}
 
+Using Theorem \@ref(thm:joint-conditional), we can expand
+
+$$
+H(X, g(X)) = H(X) + H(g(X)|X)
+$$
+  
+However, $g(X)$ is completely determined by $X$. In other words, no additional bits are needed to describe $g(X)$ if one has the bits describing $X$. Thus, $H(g(X)|X)=0$, and 
+
+\begin{equation}
+H(X,g(X)) = H(X).
+(\#eq:no-info)
+\end{equation}
+
+Additionally, we can use the alternate symmetric expansion
+
+$$
+H(X, g(X)) = H(g(X)) + H(X|g(X))
+$$
+  
+If $g$ happens to be an injective function, then $H(X|g(X))=0$ since knowing $g(x)$ allows us to trace back the specific $x$ which generated it. However, injectivity is not guaranteed. In general, $g$ could take different $x$ inputs and produce the same output with them. This conflation means that we would require additional bits. Whether injective or not, we can guarantee that $H(g(X)) + H(X|g(X))$ will not be lower than $H(g(X))$. Or, more to the point, 
+
+\begin{equation}
+H(X,g(X)) \geq H(g(X)).
+(\#eq:at-least-info)
+\end{equation}
+
+We now combine Equations \@ref(eq:no-info) and \@ref(eq:at-least-info) to assert that $H(g(X)) \leq H(X)$.
+
 ```
+
+Interestingly, we can use conditional entropy to define a **metric**.
+
+```{definition, name = "Metric"}
+
+A metric on a set $X$ is a function $d: X \times X \to [0, \infty]$ that defines distance with the following constraints:
+  
+1. $\forall x, y \in X: d(x,y) \geq 0$
+2. $\forall x, y\in X: d(x,y) = 0 \iff x = y$
+3. $\forall x, y \in X: d(x,y) = d(y,x)$
+4. $\forall x, y, z\in X: d(x,z) \leq d(x,y) + d(y,z)$
+
+```
+
+Our goal is to show that $d(X,Y) = H(X|Y) + H(Y|X)$ works. From Lemma \@ref(lem:nonnegative-entropy), property (1) should clearly be true. Our intuition should match up with property (2): the only way to be 0 is if the number of bits that describes $X$ completely describes $Y$. Property (3) should also be clear by symmetry. Property (4), intuitively, says that it takes less bits to describe $X$ and $Z$ together than to describe $X$ and $Y$ and $Y$ and $Z$ (effectively, all 3).
 
 ## Differential Entropy
 
-Differential entropy is the continuous version of discrete entropy.
+We would now like to generalize the concept of entropy to continuous stochastic variables. We call this version **differential entropy**. However, we cannot simply switch the sum for an integral:
 
-```{proof}
+```{proof, name = "Limit of Discrete Entropy"}
 
-The probability that $X^\Delta$ is in the $i$th bin is $p(x_i)\Delta x$. Then,
+Imagine a discrete stochastic variable $X$. The probability that $X^\Delta$ is in the $i$th bin is $p(x_i)\Delta x$. Then, we can imagine limiting $\Delta x$ to an infinitesimal $\mathrm{d}x$.
 
 \begin{align*}
-H(X^\Delta) &= - \sum_i p(x_i) \Delta x \log\left(p(x_i)\Delta x\right) \\
+H(X^\Delta) &= \sum_x \Pr(X=x) \log \frac{1}{\Pr(X=x)} \\
+&= \sum_i p(x_i) \Delta x \log\left( \frac{1}{p(x_i)\Delta x}\right) \\
 &= \sum_i \left[ p(x_i)\Delta x \log \frac{1}{p(x_i)} + p(x_i)\Delta x \log \frac{1}{\Delta x} \right]
 \end{align*}
 
-```
-
-
-$$
-h(x) \equiv -\int_{\mathbb{R}} f(x)\log f(x) \,\mathrm{d}x
-$$
-```{example, name = "Differential Entropy of Uniform Stochastic Variable"}
-
-On the interval $[0,a]$,
+If we allow the bins to become infinitesimal,
 
 $$
-h(x) = \int\limits_0^a \frac{1}{a} \log a \,\mathrm{d}x = \log a
+H(X) = \int_\mathbb{R} f_X(x) \log \frac{1}{f_X(x)}\,\mathrm{d}x + \sum_i p(x_i) \Delta x \log \frac{1}{\Delta x}
 $$
+  
+Unfortunately, that second term, the sum, cannot be turned into an integral because it grows to infinity.
 
 ```
 
-Notice that if $a \leq 1$, we have 0 and negative values of entropy, so differential entropy really isn't like discrete entropy.
+In any case, we drop this problematic term and label it differential entropy.
+
+```{definition, name = "Differential Entropy"}
+The differential entropy $h$ of a continuous stochastic variable $X$ is
+
+$$
+h(X) \equiv -\int_{\mathbb{R}} f_X(x)\log f_X(x) \,\mathrm{d}x
+$$
+
+```  
+
+Intuitively, this infinity term represents information regarding precision. That is, if $\Delta x$ were not infinitesimal, $H(X^\Delta)$ could be computed since the bins would have an actual size. As the bins get smaller and smaller, we need more information to pinpoint the exact numbers. If you actually knew a number to all its decimal places, you would have infinite information. It may be helpful to think of floating-point numbers here. If we actually wanted computers to represent all real numbers, it would take an infinite amount of information. 
+  
+```{exercise, name = "Entropy of Uniform"}
+
+Find $h(X)$ for $X$ a uniform distribution.
+
+```
+
+```{solution}
+
+On the interval $[a,b]$,
+
+\begin{equation}
+h(X) = \int\limits_a^b \frac{1}{b-a} \log(b-a) \,\mathrm{d}x = \log(b-a)
+(\#eq:uniform-entropy)
+\end{equation}
+  
+```
+
+Notice that if $a=0$ and $b \leq 1$, we have 0 and negative values of entropy, so differential entropy really isn't like discrete entropy.
+
+```{exercise, name = "Entropy of Exponential"}
+
+Find $h(X)$ for $X$ an exponential distribution.
+
+```
+
+```{solution}
+
+\begin{align*}
+h(X) &= -\int\limits_0^\infty f_X(x) \log f_X(x) \,\mathrm{d}x \\
+&= - \int\limits_0^\infty \lambda e^{-\lambda x}\log \left(\lambda e^{-\lambda x}\right) \,\mathrm{d}x \\
+&= - \int\limits_0^\infty \lambda e^{-\lambda x}\left(\log \lambda - \lambda x \log e \right)\,\mathrm{d}x \\
+&= - \log \lambda + \lambda \log e \int\limits_0^\infty x \lambda e^{-\lambda x}\,\mathrm{d}x
+\end{align*}
+
+Recall that the expectation of the exponential is $1/\lambda$. Thus, 
+
+\begin{equation}
+h(X) = - \log \lambda + \lambda \frac{1}{\lambda} \log e = \log(e/\lambda)
+(\#eq:exp-entropy)
+\end{equation}
+
+```
+
+```{exercise, name = "Entropy of Gaussian"}
+
+Find $h(X)$ for $X$ a Gaussian distribution.
+
+```
+
+```{solution}
+
+The Gaussian distribution is a function with a lot of components, so we'll simplify the proof by packaging some of the parts
+
+\begin{align*}
+f_X(x) &= \frac{1}{\sqrt{2\pi\sigma^2}}\exp(-x^2/(2\sigma^2)) \\
+&= c \exp g(x)
+\end{align*}
+
+We can drop the $\mu$ because the integral expands over the real line anyways. A $u$-substitution of $y=x-\mu$ would not change the integral.
+
+The trick to this question is to expand only the $\log$ side of the differential entropy:
+
+\begin{align*}
+h(X) &= - \int_{\RR} f_X(x) \log f_X(x)\,\mathrm{d}x && \text{definition} \\
+&= - \int_{\RR} f_X(x) \log(c\exp(g(x))) \,\mathrm{d}x && \text{substitution} \\
+&= - \int_{\RR} \left( f_X(x)  \log c + f(x) \log \exp(g(x)) \right) \,\mathrm{d}x && \text{distributive property} \\
+&= - \left( \log c \cancelto{1}{\int_{\RR}  f_X(x)   \,\mathrm{d}x }  + \int_{\RR} f(x) \frac{\ln \exp(g(x))}{\ln 2}\,\mathrm{d}x \right)&& \text{change of base} \\
+&= - \left( \log c + \frac{-1}{2\sigma^2\ln 2}\int_{\RR} f(x) x^2 \,\mathrm{d}x \right) && \text{substitution} \\
+&= - \left( \log c + \frac{-1}{2\sigma^2\ln 2}\mathbb{E}[X^2] \right) && \text{definition} \\
+&= - \left( \log c + \frac{-\sigma^2}{2\sigma^2\ln 2} \right) && \text{Gaussian properties} 
+\end{align*}
+
+The expression simplifies to
+
+\begin{equation}
+h(X) = \log(2\pi e \sigma^2)/2
+(\#eq:gauss-entropy)
+\end{equation}
+
+```
+
+Having done all the work of finding the differential entropy for three continuous stochastic variables, we make a few claims with important ramifications:
+
+\underline{Claim}: Given a fixed upper and lower bound, no pdf can have a larger entropy than the uniform stochastic variable, the entropy given in  Equation \@ref(eq:uniform-entropy).
+
+\underline{Claim}: Given a positive stochastic variable with a mean $\mu$ with no other constraints, no pdf can have a larger entropy than the exponential stochastic variable, the entropy given in Equation \@ref(eq:exp-entropy). [^exp]
+
+[^exp]: In other words, the exponential random variable is the most equiprobable way of creating a convergent series.
+
+\underline{Claim}: Given a stochastic variable of variance $\sigma^2$ with no other constraints, no pdf can have a larger entropy than the Gaussian, the entropy given in  Equation \@ref(eq:gauss-entropy).

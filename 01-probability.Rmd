@@ -9,10 +9,10 @@ A **stochastic variable** is a real-valued function of an outcome of an experime
 
 ```
 
-```{remark}
-
+```{marginfigure}
+\begin{remark}
 Stochastic variables are also called random variables, but this term seems to imply all possibilities are equally likely or cannot be determined. The word stochastic generally means something like "depending upon probabilities." 
-
+\end{remark}
 ```
 
 
@@ -34,20 +34,20 @@ Sum two rolls of a die. This value could be a stochastic variable. The number of
 
 ```
 
-A stochastic variable can either be discrete, taking on values from a countable set or continuous, taking on values on an interval from the real number line. 
+A stochastic variable can either be discrete, taking on values from a countable set or continuous, taking on values on an interval from the real number line $\mathbb{R}$. 
 
 
 ## Probability Measure
 
 ```{definition, name = "Sample Space"}
 
-The sample space is the set of all possible outcomes for an experiment.
+The **sample space** is the set of all possible outcomes for an experiment.
 
 ```
 
 ```{marginfigure}
 
-The sample space is typically denoted as $\Omega$.
+The sample space is typically represented with $\Omega$.
 
 ```
 
@@ -69,24 +69,34 @@ Any event belongs to the power set of $\Omega$.[^event-examples] Thus, events ra
 ```{marginfigure, fig.cap = "Relationship of Variables in Probability"}
 \begin{tikzcd}
  & X \arrow{dr}{\text{can take on values from}} \\
-\mathbb{P} \arrow{ur}{\text{function of}} \arrow{rr}{\text{of specific value}} && x
+\Pr \arrow{ur}{\text{function of}} \arrow{rr}{\text{of specific value}} && x
 \end{tikzcd}
 ```
 
 ```{definition, name = "Probability Measure"}
 
-The probability measure $\mathbb{P}$ is a real-valued function that assigns events probabilities obeying the Kolmogorov axioms.
+The **probability measure** $\Pr$ is a real-valued function that assigns events probabilities obeying the **Kolmogorov axioms**.
 
 ```
 
-Our notions of probability are fairly intuitive, so a careful treatment of the Kolmogorov axioms is not needed. They are available in the [appendix](#kmaxm), however.
+```{remark}
+
+Our notions of probability are fairly intuitive, so a careful treatment of the Kolmogorov axioms is not needed. They are available in the [appendix](#kmaxm), however. 
+
+```
+
+If each element of an event $A$ is equally likely, then
+
+$$
+\Pr(A) = \frac{|A|}{|\Omega|}
+$$
 
 
 ```{marginfigure}
 **Notation**. In general, if $X$ is a stochastic variable, the probability mass function can be written in two equivalent ways:
 
 \begin{equation}
-p_X(x) = \mathbb{P}(X=x)
+p_X(x) = \Pr(X=x)
 (\#eq:prob-notation)
 \end{equation}
 
@@ -95,20 +105,28 @@ p_X(x) = \mathbb{P}(X=x)
 
 ## Bayes' Theorem
 
-When events $A$ and $B$ are not independent, knowing what $A$ is gives us information about what $B$ might be (and vice versa). The notation $\mathbb{P}(A|B)$ denotes the probability of $A$ given that or conditioned upon $B$ occuring. Consider that for $A$ and $B$ to happen that $B$ must first happen and $A$ must happen under those circumstances. 
+Events $A$ and $B$ are said to be independent if the occurence of one does not affect the probabilities of the other. When events $A$ and $B$ are not independent, knowing what $A$ is gives us information about what $B$ might be (and vice versa). The notation $\Pr(A|B)$ denotes the probability of $A$ given that or conditioned upon $B$ occuring. Consider that for $A$ and $B$ to happen that $B$ must first happen and $A$ must happen under those circumstances. 
 
-$$
-\mathbb{P}(A \cap B)  = \mathbb{P}(B) \cdot \mathbb{P}\left(A | B\right) 
-$$
+\begin{equation}
+\Pr(A \cap B)  = \Pr(B) \cdot \Pr\left(A | B\right) 
+(\#eq:conditional-prob)
+\end{equation}
 
 From this definition, Thomas Bayes determined how to compute the support $B$ provides for $A$ given _priors_ and _posteriors_. 
 
 
 ```{theorem, name = "Bayes' Theorem"}
 
-\begin{equation}
-\mathbb{P}( A|B) = \frac{\mathbb{P}(B|A)\mathbb{P}(A)}{\mathbb{P}(B)}
-\end{equation}
+$$
+\Pr( A|B) = \frac{\Pr(B|A)\Pr(A)}{\Pr(B)}
+$$
+
+```
+
+```{proof}
+
+Equation \@ref(eq:conditional-prob) is symmetric since $A$ and $B$ is the same as $B$ and $A$. Thus, $\Pr(A|B)\Pr(B) = \Pr(B|A)\Pr(B)$.
+
 
 ```
 
@@ -137,7 +155,7 @@ It is useful to construct a table of all the possibilities.
 From the table, we can conclude that
 
 $$
-\mathbb{P}(X=x) = \begin{cases}
+\Pr(X=x) = \begin{cases}
 1/4 & x = 0 \\
 1/2 & x = 1 \\
 1/4 & x = 2 \\
@@ -197,16 +215,48 @@ b) $Z=X^2 \implies p_Z(z)=\begin{cases}2/9 & z \in \{1,4,9,16\} \\ 1/9 & z=0 \en
 
 ```
 
-A special class of functions, known as moments, include two operators, **expectation** and **variance**.
+A special class of functions, known as moments, include two operators, **expectation** and **variance**. 
+
 
 ```{definition, name = "Expectation"}
 
 The expectation of a function $g$ of a stochastic variable $X$ is
 
 $$
-\mathbb{E}[g(X)] \equiv \sum_{x \in \Omega} g(x) \cdot \mathbb{P}(X=x)
+\mathbb{E}[g(X)] \equiv \sum_{x \in \Omega} g(x) \cdot \Pr(X=x)
 $$
 
+```
+
+
+Expectation returns the mean of the function $g$, that is, what we expect the average value of $g(X)$ to be if we run the experiment an infinite number of times.
+
+```{exercise, name = "Expected Value of a Die"}
+
+Find $\mathbb{E}[X]$ where $X$ is the value of a roll of a die.
+
+```
+
+```{solution}
+
+Each value has a $1/6$ chance of appearing. Therefore,
+
+$$
+\mathbb{E}[X] = \sum_{i=1}^6 \frac{1}{6}i = \frac{21}{6} = 3.5
+$$
+  
+We include a numerical solution showing convergence:
+
+```{python}
+N  = 1000; plt.plot(np.cumsum(np.random.randint(1, 7, size=N)) / np.arange(1, N + 1))
+```
+
+```{python, echo = FALSE}
+plt.xlabel("Number of Rolls")
+plt.ylabel("Expectation")
+plt.title("Law of large numbers")
+plt.plot(np.ones(shape=N) * 3.5)
+plt.show()
 ```
 
 
@@ -271,11 +321,31 @@ $$
 
 As a result,
   
-$$\mathbb{E}[\mathbb{1}_A(\omega)] = \mathbb{P}(A)$$ $$\mathrm{Var}[\mathbb{1}_A(\omega)] = P(A)(1-P(A))$$
+$$\mathbb{E}[\mathbb{1}_A(\omega)] = \Pr(A)$$ $$\mathrm{Var}[\mathbb{1}_A(\omega)] = P(A)(1-P(A))$$
 
 ```
 
+```{lemma}
 
+If $X$ and $Y$ are independent, 
+
+$$
+\operatorname{Var}[X+Y] = \operatorname{Var}[X] + \operatorname{Var}[Y]
+$$
+
+```
+
+```{proof}
+\begin{align*}
+\operatorname{Var}[X+Y] &= \mathbb{E}[(X+Y)^2] - \mathbb{E}[X+Y]^2 \\
+&= \mathbb{E}[X^2 + 2XY + Y^2] - \mathbb{E}[X+Y]^2 \\
+&= \mathbb{E}[X^2] + 2\mathbb{E}[XY] + \mathbb{E}[Y^2] - (\mathbb{E}[X+Y])^2 \\
+&= \mathbb{E}[X^2] + 2\mathbb{E}[X]\mathbb{E}[Y] + \mathbb{E}[Y^2] - \left( \mathbb{E}[X]^2 + 2\mathbb{E}[X]\mathbb{E}[Y] + \mathbb{E}[Y]^2 \right) \\
+&= \mathbb{E}[X^2] + 2\mathbb{E}[X]\mathbb{E}[Y] + \mathbb{E}[Y^2] - \mathbb{E}[X]^2 - 2\mathbb{E}[X]\mathbb{E}[Y] - \mathbb{E}[Y]^2 \\
+&= \mathbb{E}[X^2] - \mathbb{E}[X]^2 + \mathbb{E}[Y^2] - \mathbb{E}[Y]^2 \\
+&= \operatorname{Var}[X] + \operatorname{Var}[Y]
+\end{align*}
+```
 
 |Distribution|Expectation|Variance|
 |--------------------|-----------|--------|
@@ -303,7 +373,7 @@ $$
 However, asking whether $X=x$ is no longer a well-formed question, since $X$ has a continuum. The probability that $X$ takes on the exact value $x$ is nil. Therefore, probabilities of a continuous stochastic variable may only be queried in the following form.
 
 $$
-\mathbb{P}(a\leq X \leq b) = \int\limits_{a}^{b}f_X(x)\,\mathrm{d}x
+\Pr(a\leq X \leq b) = \int\limits_{a}^{b}f_X(x)\,\mathrm{d}x
 $$
 
 By extension, the expectation of a pdf can be computed as

@@ -1,3 +1,12 @@
+
+```{python, echo = FALSE}
+
+def entropy(probs, base = 2):
+  log_probs = np.log(probs) / np.log(base)
+  return - probs @ log_probs
+
+```
+
 # Source Coding
 
 ## Encoding the English Alphabet
@@ -18,30 +27,301 @@ Our next solution will take into account frequency. The three most common letter
 
 ## Huffman Coding
 
-The solution devised by David Huffman has optimality given certain conditions. First, we'll need to describe the algorithm of Huffman coding.
+In 1952, David Huffman, a student at MIT, developed an algorithm for efficiently encoding symbols without any loss of information. The algorithm follows:
+
+```{marginfigure}
+**Notation**. Let $\Sigma$ denote an alphabet of symbols to be encoded.
+```
+
 
 \begin{algorithm}[H]
     \SetAlgoLined
-    \KwData{A map $m: \Sigma \to [0,1]$}
+    \KwData{A map of symbols and their weights}
     \KwResult{A binary tree representing an encoding scheme}
-    \While{$|\mathrm{preimage}(m)| > 1$}{
-        $a \gets \arg\min m$\;
-        Remove $a$ from $m$\;
-        $b \gets \arg\min m$\;
-        Remove b from $m$\;
-        Insert symbol $ab$ with frequency $m(a)+m(b)$\;
+    \While{The map has more than 1 key}{
+        Remove the two symbols $a$ and $b$ with the least weights \;
+        Insert a new symbol, a tree with leaves $a$ and $b$, with a weight equal to the sum of their individual weights \;
     }
-\caption{Huffman Coding}
+\caption{Building a Huffman Tree}
 \end{algorithm}
 
-```{theorem, name = "Huffman Coding Optimality"}
+
+```{theorem, huffman-optimality, name = "Huffman Coding Optimality"}
 
 If $X$ is a random variable, and $L$ is the expected number of bits per letter using Huffman coding,
 
 $$
-H(X) \leq L \leq H(X)+1
+H(X) \leq L(X) \leq H(X)+1
 $$
 
 ```
 
-An intuitive video explaining Huffman coding can be found here: https://www.youtube.com/watch?v=JsTptu56GM8 . A Python program is available here: https://gist.github.com/ashwinreddy/8b8eb194bc3bf264a81affb5b6cdff06 .
+An intuitive video explaining Huffman coding can be found here: https://www.youtube.com/watch?v=JsTptu56GM8 . A Python program is available here: https://github.com/ashwinreddy/huffman .
+
+```{example}
+
+Let $X \in \Sigma$ where $\Sigma = \{1,2,3,4,5\}$ with probabilities .25, .25, .2, .15, .15, respectively. 
+
+a) Draw the Huffman Tree
+b) Compute $\mathbb{E}[L(X)]$ where $L(X)$ is the length of the encoding for $X$.
+c) Find $H(X)$
+d) Repeat for a ternary tree
+
+```
+
+```{solution}
+
+Drawing the tree, we find
+
+\begin{figure}
+\Tree[. [. [.1 ]
+               [. 4 5 ]]
+          [. 2 3 ]]
+\caption{Huffman Tree with 2 branches}
+\end{figure}
+
+The expected word length is between 2 and 3 since each node is either at the second or third level. 30% of the time, we expect to see a 4 or a 5, which will require 3 bits. The other 70% of the time, we expect to use two bits.
+
+$$
+\mathbb{E}[L(X)] = 0.3\cdot 3 + 0.7 \cdot 2 = 2.3
+$$
+
+Also, $H(X)\approx 2.28$. Huffman coding is within the band of optimality.
+
+\begin{figure}
+\Tree[. 1 2 [. 3 4 5 ] ]
+\caption{Huffman Tree with 3 Branches}
+\end{figure}
+
+The expected word length is 1.5 bits. We adjust $H(X)$ using $\log_3$ accordingly to find $H(X)\approx 1.3$.
+
+```
+
+To remain efficient, one must insert an appropriate number of dummy symbols into the list with weights 0. Add enough symbols so that the total number of symbols can be written as $1+k(D-1)$ where $D$ is the base being used for the smallest possible $k \in \mathbb{N}$.
+
+In the special case that $D=2$, the formula simplifies to $1+k$. In other words, in base 2, dummy symbols do not need to be added if there is already at least one symbol. 
+
+
+## Lagrange Multipliers
+
+To prove Huffman optimality, we will use Lagrange multipliers. Recall that Lagrange multipliers solve constraint/constrained optimization problems. For this family of problems, we attempt to minimize or maximize a function that is constrained by some relation of the function's variables. Lagrange Multipliers provides the following algorithm to solving this problem.
+
+1. Let $f(x_1, \dots, x_n)$ be a function whose extrema we would like to find. Let $g(x_1,\dots, x_n)=k$ be a constraint imposed on the $x_1,\dots,x_n$.
+2. Solve the equation $\vec\nabla f = \lambda \vec\nabla g$ while still imposing the constraint that $g(x_1,\dots,x_n)=k$. This system should provide enough equations for the variables involved.[^1]
+3. Collect the solutions. These are possible extrema.
+
+Alternatively, we can construct a function
+
+$$
+\mathcal{L}(x,y,\lambda) = f(x,y)-\lambda g(x,y)
+$$
+Then, solving the constrained optimization problem reduces to finding solutions to $\vec\nabla \mathcal{L} = \vec{0}$.
+
+[^1]: We introduced a $\lambda$ not involved in the original system, which adds an additional equation because we must also solve for $\lambda$.
+
+
+
+
+
+```{example}
+
+Find extrema of $f(x,y) = x^2 - \ln x$ subject to $8x - 3y = 0$.
+
+```
+
+```{solution}
+
+Let $g(x) = 8x+3y$. We solve two equations simultaneously:
+  
+\begin{gather}
+\vec\nabla f(x,y) = \lambda  \vec\nabla g(x,y) \label{eq:lagrange-gradient1} \\
+8x+3y = 0
+\end{gather}
+
+We then expand Equation \@ref(eq:lagrange-gradient1), a vector equation, into its two component equations. To do this, we must first calculate the gradients.
+
+\begin{gather*}
+\frac{\partial f}{\partial x} = \lambda \frac{\partial g}{\partial x} \implies 2xy - \frac{1}{x} = 8 \lambda \\
+\frac{\partial f}{\partial y} = \lambda \frac{\partial g}{\partial y} \implies x^2 = 3\lambda \\
+8x+3y = 0
+\end{gather*}
+
+Solving all three equations, we find that $x=-1/2$, $y=4/3$, and $\lambda = 1/12$.
+
+
+```
+
+```{solution, name = "Alternative Solution"}
+
+The constraint $8x+3y=0$ can be rewritten as $y(x)=-\frac{8}{3}x$. Then $f(x,y)$ is really only a function of $x$:
+  
+\begin{align*}
+f(x,y(x)) &= f(x) = x^2 \left(-\frac{8}{3}x\right)-\ln x \\
+&= -\frac{8}{3}x^3 - \ln x
+\end{align*}
+  
+We can find minima of $f$ w.r.t $x$ from here:
+
+$$
+\frac{\mathrm{d}f}{\mathrm{d}x} = -8x^2 - \frac{1}{x}
+$$
+  
+\begin{gather*}
+-8x^2 - \frac{1}{x} = 0 \\
+-8x^2 = \frac{1}{x} \\
+-8x^3 = 1 \\
+x^3 = -\frac{1}{8} \\
+x = -1/2
+\end{gather*}
+
+The value of $y$ can be recovered by simply evaluating $y(-1/2)=4/3$.
+
+```
+
+## Coding Classifications
+
+
+```{marginfigure}
+
+Instantaneous is a synonym for prefix-free
+
+```
+
+- All codes
+- Nonsingular codes (nonsingular codes are when the mapping from source symbols to bit string is injective.)
+- Uniquely decodable codes
+- Instantaneous codes
+
+## Huffman Optimality
+
+
+```{theorem, kraft, name = "Kraft Inequality"}
+
+All instaneous codes with $d$ symbols with code word lengths $\ell_1, \dots, \ell_m$ must satisfy
+
+$$
+\sum_{i=1}^m 2^{-\ell_i} \leq 1
+$$
+  
+```
+
+```{proof}
+
+Note that an instaneous entails that no code word is the ancestor of another code word on the tree. 
+
+1. Let $\ell_{max}$ be the length of the longest code word.
+2. For the sake of argument, grow the tree out to length $\ell_{max}$ (create and expand nodes out to this depth)
+3. Code words with length $\ell_i$ have $2^{\ell_{max} - \ell_i}$ descendants at the level $\ell_{max}$.
+4. Since instantaneous codes do not grow to this level, it must be the case that
+
+$$
+\sum_i 2^{\ell_{max} - \ell_i} \leq \sum_i 2^{\ell_{max}}
+$$
+
+Since $2^{\ell_{max}}$ is constant given the $\ell_i$'s, 
+
+$$
+\sum_{i=1}^m 2^{-\ell_i} \leq 1
+$$
+  
+```
+
+We can now write down a constraint-optimization problem. We would like to minimize the expected length given the constraint defined by Theorem \@ref(thm:kraft).
+
+$$
+\min L=\mathbb{E}[\ell] \qquad \sum_{i=1}^m 2^{-\ell_i} \leq 1
+$$
+
+We formulate a Lagrangian
+
+$$
+\mathcal{L}(\ell_1, \ell_2, \dots, \ell_n, \lambda) = \sum_{i} p_i \ell_i - \lambda \left( \sum 2^{-\ell_i} - 1\right)
+$$
+
+$$
+\frac{\partial \mathcal{L}}{\partial \ell_i} = p_i + \lambda \left(2^{-\ell_i}\ln 2 \right)
+$$
+
+$$
+L^* = \sum p_i \ell_i^* = -\sum p_i \log_2 p_i = H(X)
+$$
+
+---
+
+Since $\log \frac{1}{p_i}$ may not be an integer, we use $\ell_i = \lceil \log \frac{1}{p_i} \rceil$. We show that it still satisfies Theorem \@ref(thm:kraft).
+
+\begin{gather}
+\sum_i 2 ^{-\ell_i} \leq \sum_i 2^{- \log \frac{1}{p_i}} = \sum p_i = 1 \\
+\log \frac{1}{p_i} \leq l_i \leq \log \frac{1}{p_i} + 1 \\
+\sum p_i \log \frac{1}{p_i} \leq \sum p_i l_i \leq \sum p_i \log \frac{1}{p_i} + 1 \\
+H(X) \leq L(X) \leq H(X) + 1
+\end{gather}
+
+The 1 bit is split over the block
+
+Huffman produces an optimal code but does not have to be the only way.
+
+```{lemma}
+
+For any distribution, there exists an instantaneous, optimal code minimizing the expected length that satisfies
+
+a) $p_j > p_k \implies \ell_j \leq \ell_k$.
+b) The two longest code words have the same length
+c) The two longest code words differ only in the last bit, and correspond to the two least likely symbols.
+
+```
+
+```{proof}
+
+We prove each part in order.
+
+a) Consider $C_m'$ with code words $j$ and $k$ swapped. Assume $C_m$ optimal.
+
+\begin{align*}
+L(C_m') -L(C_m) &= \sum_i p_i \ell_i' - \sum_i p_i \ell_i \\
+&= \sum_i p_i \ell_i' - \sum_i p_i \ell_i \\
+&= p_j \ell_k + p_k \ell_j - p_j \ell_j -p_k \ell_k \\
+&= \underbrace{(p_j - p_k)}_{>0}(\ell_k-\ell_j)
+\end{align*}
+
+b) 
+
+c) Suppose there is a max length code word without any siblings. THen, we can delete the last bit of the code word and still satisfy the prefix-free property. This leads to a contradiction. Therefore, every maximal lnegth code word in any optimal code must have siblings. Then, exchange longest code words such that the lowest probability code word are associated with 2 siblings (doesn't change $\mathbb{E}[L]$)
+
+Given optimal code, it can be shuffled into Huffman without changing expected word length, implying optimality.
+
+Let $p$ be a tuple $(p_1, p_2, \dots, p_m)$ from greatest to least. Let $C^\star_m(p)$ be the optimal distribution. If $p' = (p_1, p_2, \dots, p_{m-2}, p_{m-1}+p_m)$ and $C^\star_{m-1}(p')$ optimal code for $p'$
+
+1) Take $C^\star_{m-1}(p')$ and extend $(p_{m-1} + p_m)$ node by adding 0 to form a code word for $p_{m-1}$ and 1 to form a code word for $p_m$.
+
+\begin{equation}
+L(p) = L^\star (p') + p_{m-1} + p_m
+(\#eq:huffman-optimality-1)
+\end{equation}
+
+2) Take $C^\star_m(p)$ and merge code word for 2 lowest symbols
+
+
+\begin{equation}
+L(p') = L^\star(p)-p_{m-1}-p_m
+(\#eq:huffman-optimality-2)
+\end{equation}
+
+Add Equations \@ref(eq:huffman-optimality-1) and \@ref(eq:huffman-optimality-2):
+
+$$
+L(p) + L(p') = L^\star(p') + L^\star(p)
+$$
+
+Use induction to show this is true for all levels of the tree.
+
+```
+
+
+
+```{theorem, name = "Huffman Optimality"}
+
+Huffman coding is optimal.
+
+```
+
