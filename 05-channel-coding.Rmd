@@ -1,0 +1,152 @@
+# Channel Coding
+
+We now move to discussing channels. 
+
+Examples of channels include:
+
+```{example}
+
+Fiber optical / light-based transmissions
+
+```
+
+```{example}
+
+Air or free space transmissions
+
+```
+
+```{example}
+
+Coppper
+
+```
+
+Each medium will have two characteristics relating to how it affects the signal crossing it: attentuation (decrease in signal strength) and time delay or latency. These actually are not as problematic as one might think: given the characteristics, one can easily decode the message on the other end. The real problem is noise.
+
+We might imagine a black box that takes an input waveform and produces an output. We might also consider the same with noise added.
+
+We now have a pdf over waveforms, conditioned on input: $P(Y| X = x)$. 
+
+```{marginfigure}
+_Assumption_. Noise is independent of input.
+```
+
+## Channel Capacity
+
+1) Send something; before it comes out of the pipe, what is the surprisal of getting input exactly?
+
+$$
+\log \frac{1}{p(x)}
+$$
+
+2) Now, Y pops out. Surprisal of $X$ being sent?
+
+$$
+\log \frac{1}{p(x|y)}
+$$
+
+3) What is the value (i.e. information or decrease in surprise) of seeing Y pop out?
+
+$$
+\log\frac{1}{p(x)} - \log \frac{1}{p(x|y )}
+$$
+
+4) What is the expectation of the information value of seeing Y pop out?
+
+\begin{align*}
+\mathbb{E}_{x,y}\left[ \log \frac{1}{p(x)} - \log \frac{1}{p(x|y)} \right] = \sum_{x,y} p(x,y) \log \frac{p(x|y)}{p(x)} \\
+&= \sum_{x,y} p(x,y) \log\frac{p(x|y)p(y)}{p(x)p(y)} \\
+&= D_{KL}(p(x,y) \parallel p(x)p(y) ) \\
+&= I(X;Y)
+\end{align*}
+
+```{remark}
+
+Simply put, mutual information is expected information value.
+
+```
+
+```{definition, name = "Channel Capacity"}
+
+The channel capacity is the maximum mutual information over all sources.
+
+$$
+C \equiv \sup_{p_X(x)} I(X; Y)
+$$
+
+```
+
+```{example}
+
+Find the channel capacity of a binary channel. Assume the probability of sending a 0 is $q$ and sending a 1 is $1-q$.
+
+```
+
+```{r, echo = FALSE, engine='tikz', fig.cap = "Binary Channel"}
+
+\begin{tikzpicture}[scale=3]
+\path(0,1) coordinate (X0);
+\node[above] at (0,1) {X=0};
+\fill (X0) circle (1pt);
+
+\path(0,0) coordinate (X1);
+\node[below] at (0,0) {X=1};
+\fill (X1) circle (1pt);
+
+\path(1,1) coordinate (Y0);
+\node[above] at (1,1) {Y=0};
+\fill (Y0) circle (1pt);
+
+\path(1,0) coordinate (Y1);
+\node[below] at (1,0) {Y=1};
+\fill (Y1) circle (1pt);
+
+\draw (X0) -- node[below] {1-p} (Y0);
+\draw (X0) -- node[below] {p} (Y1);
+\draw (X1) -- node[above] {p} (Y0);
+\draw (X1) -- node[below] {1-p} (Y1);
+\end{tikzpicture}
+
+```
+
+```{solution}
+
+$$
+I(X;Y) = H(Y) - H(p)
+$$
+
+$$
+\max I(X;Y) = 1 - H(p)
+$$
+
+```
+
+Notice that the channel capacity for a noiseless binary channel is just 1.
+
+```{example}
+
+Find the channel capacity of a Gaussian $Z \sim \mathcal{N}(0, \sigma_z^2)$. $Y=X+Z$.
+
+```
+
+```{marginfigure}
+
+For formulas previously where we used discrete entropy $H$, the differential entropy $h$ can be replaced without modification.
+
+```
+
+```{solution}
+
+\begin{align*}
+\sup I(X;Y) &= h(Y) - h(Y|X) \\
+&= h(Y) - h(Z)
+\end{align*}
+
+The question is what is $h(Y)$. We have to make some assumptions about the structure of $X$. We assume it is normal. The variance of the sum of two normal distributions is the sum of the variances of the two normal distributions. Thus,
+
+$$
+\sigma_y^2 = \sigma_x^2 + \sigma_z^2
+$$
+
+```

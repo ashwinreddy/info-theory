@@ -1,5 +1,62 @@
 # Coupled Stochastic Variables
 
+## Fun with Expectations
+
+$$
+\mathbb{E}[X|Y=y] = \sum_x P(X=x|Y=y)  = \int_\mathbb{R} xf_{x|y}(x|y) dx
+$$
+
+```{exercise}
+
+A miner is lost in a cave. Facing north, he finds three caverns which seem to continue on. If he follows the trail through the first cavern, he will find his way back home in 3 hours. Through the second cavern, he will follow a circuitous route such that he will enter the cave facing north again. Through the third cavern, the same will occur but in 7 hours. The miner is very scared and cold and forgets which path he took every time he returns to the cave. He also never turns around to see the hole(s) that took him back to the cave. Find the expected time it takes for him to go to safety.
+
+```
+
+```{solution}
+
+Imagine a Markov model with loops of 5 and 7 back to themselves with probability 1/3 each and an edge with 3 out to the final state.
+
+$$
+\mathbb{E}[X] = \sum_x xp(x)
+$$
+
+There's a 1/3 probability straight off the bat that he escapes the cave and doesn't have to deal with any of this nonsense. In this case, $xp(x)=3\cdot\frac{1}{3}=1$. However, there's a 2/3 chance that he takes 6 hours to come back (since the 5 and 7 hour paths have equal probabilities of being selected, given that the first path was not). From there, the process repeats. In essence, the expression looks like
+
+$$
+\frac{1}{3}(3) + \frac{2}{3}\left[ 6 + \frac{1}{3}(3) + \frac{2}{3}\left[ 6 + \frac{1}{3}(3) + \dots \right. \right.
+$$
+
+Given that the expression continues on infinitely, we cannot evaluate it as a closed-form expression. Let us instead consider generically the sum
+
+$$
+k(j+k(j + k(j + \dots
+$$
+
+If we write 
+
+$$
+f(n) = k \left[j + f(n) \right]
+$$
+
+Then
+
+\begin{gather*}
+f(n) = kj + k f(n) \\
+f(n) - kf(n) = kj \\
+f(n)(1-k) = kj \\
+f(n) = \frac{kj}{1-k}
+\end{gather*}
+
+Using our values $k=2/3$ and $j=7$, we evaluate the entire expression from earlier as 15 hours.
+
+```
+
+```{exercise}
+
+What is the expected number of cards one must flip to obtain 2 aces.
+
+```
+
 ## Conditional Probability
 
 Given the joint probability function $p(X=x,Y=y)$ and a function $Z=g(X,Y)$ for random variables $X$ and $Y$, can we find the probability function for $Z$?
@@ -104,11 +161,16 @@ $$
 ```
 
 ```{lemma}
-\begin{align*}
-I(X; Y) &= H(X) - H(X|Y) \\
-&= H(Y) - H(Y|X) \\
-&= H(X)+H(Y) - H(X,Y)
-\end{align*}
+\begin{equation}
+I(X; Y) = H(X) - H(X|Y) = H(Y) - H(Y|X)
+(\#eq:mutual-info-cond)
+\end{equation}
+```
+
+```{corollary}
+$$
+I(X;Y) = H(X) + H(Y) - H(X,Y)
+$$
 ```
 
 

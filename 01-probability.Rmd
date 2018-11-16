@@ -248,13 +248,13 @@ $$
 We include a numerical solution showing convergence:
 
 ```{python}
-N  = 1000; plt.plot(np.cumsum(np.random.randint(1, 7, size=N)) / np.arange(1, N + 1))
+N  = 500; plt.plot(np.cumsum(np.random.randint(1, 7, size=N)) / np.arange(1, N + 1))
 ```
 
 ```{python, echo = FALSE}
 plt.xlabel("Number of Rolls")
 plt.ylabel("Expectation")
-plt.title("Law of large numbers")
+plt.title("Law of Large Numbers")
 plt.plot(np.ones(shape=N) * 3.5)
 plt.show()
 ```

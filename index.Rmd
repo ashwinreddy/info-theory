@@ -1,10 +1,8 @@
 ---
 title: "Information Theory"
-author: "Ashwin Reddy"
 output:
   bookdown::tufte_book2:
     keep_tex: false
-    template: template.tex
 classoption: oneside
 documentclass: tufte-book
 fontsize: 13pt
