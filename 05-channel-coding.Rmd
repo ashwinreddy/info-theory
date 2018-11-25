@@ -55,7 +55,7 @@ $$
 4) What is the expectation of the information value of seeing Y pop out?
 
 \begin{align*}
-\mathbb{E}_{x,y}\left[ \log \frac{1}{p(x)} - \log \frac{1}{p(x|y)} \right] = \sum_{x,y} p(x,y) \log \frac{p(x|y)}{p(x)} \\
+\mathbb{E}_{x,y}\left[ \log \frac{1}{p(x)} - \log \frac{1}{p(x|y)} \right] &= \sum_{x,y} p(x,y) \log \frac{p(x|y)}{p(x)} \\
 &= \sum_{x,y} p(x,y) \log\frac{p(x|y)p(y)}{p(x)p(y)} \\
 &= D_{KL}(p(x,y) \parallel p(x)p(y) ) \\
 &= I(X;Y)
@@ -72,7 +72,7 @@ Simply put, mutual information is expected information value.
 The channel capacity is the maximum mutual information over all sources.
 
 $$
-C \equiv \sup_{p_X(x)} I(X; Y)
+C \equiv \max_{p_X(x)} I(X; Y)
 $$
 
 ```
@@ -143,7 +143,15 @@ For formulas previously where we used discrete entropy $H$, the differential ent
 &= h(Y) - h(Z)
 \end{align*}
 
-The question is what is $h(Y)$. We have to make some assumptions about the structure of $X$. We assume it is normal. The variance of the sum of two normal distributions is the sum of the variances of the two normal distributions. Thus,
+The question is what is $h(Y)$. We have to make some assumptions about the structure of $X$. We assume it is normal. 
+
+1. Remember that Z is independent of X.  Without further conditions, the capacity of this channel may be infinity.  Why?
+2. Well, if the noise variance is zero, then the receiver receives the transmitted symbol perfectly.  Since X can take on any real value, the channel can transmit an arbitrary real number with no error.
+3. On the other hand, if the noise variance is non-zero, and there is no constraint on the input, we can choose an infinite subset of inputs arbitrarily far apart, so that they are distinguishable at the output (with really really really small probability of making a mistake).  Such a scheme also has an infinite capacity for the channel.  
+4. Since neither of these scenarios (2 and 3) are useful/practical to look at, we have a constraint on the input X.  The constraint is usually on the variance of X (which is then assumed to be sigma_x^2).
+5. From this point on, we can follow the reasoning that Akshay and Ashwin gave in class and conclude what the capacity of the Gaussian channel is.
+
+The variance of the sum of two normal distributions is the sum of the variances of the two normal distributions. Thus,
 
 $$
 \sigma_y^2 = \sigma_x^2 + \sigma_z^2
